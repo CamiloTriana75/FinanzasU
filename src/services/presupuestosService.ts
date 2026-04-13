@@ -23,7 +23,7 @@ export async function getPresupuestos(
     .eq('user_id', userId)
     .eq('tipo', 'gasto')
     .gte('fecha', `${anio}-${String(mes).padStart(2, '0')}-01`)
-    .lte('fecha', `${anio}-${String(mes).padStart(2, '0')}-31`)
+    .lte('fecha', new Date(anio, mes, 0).toISOString().split('T')[0])
 
   if (gError) throw gError
 
