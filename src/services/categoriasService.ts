@@ -5,7 +5,7 @@ export async function getCategorias(userId: string): Promise<Categoria[]> {
   const { data, error } = await supabase
     .from('categorias')
     .select('*')
-    .or(`usuario_id.eq.${userId},es_predeterminada.eq.true`)
+    .or(`user_id.eq.${userId},es_predeterminada.eq.true`)
     .order('es_predeterminada', { ascending: false })
     .order('nombre')
 
@@ -17,7 +17,7 @@ export async function getCategoriasPorTipo(userId: string, tipo: string): Promis
   const { data, error } = await supabase
     .from('categorias')
     .select('*')
-    .or(`usuario_id.eq.${userId},es_predeterminada.eq.true`)
+    .or(`user_id.eq.${userId},es_predeterminada.eq.true`)
     .eq('tipo', tipo)
     .order('nombre')
 
@@ -44,7 +44,7 @@ export async function updateCategoria(
     .from('categorias')
     .update(data)
     .eq('id', id)
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
     .eq('es_predeterminada', false)
     .select()
     .single()
@@ -57,7 +57,7 @@ export async function deleteCategoria(id: string, userId: string): Promise<void>
     .from('categorias')
     .delete()
     .eq('id', id)
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
     .eq('es_predeterminada', false)
   if (error) throw error
 }

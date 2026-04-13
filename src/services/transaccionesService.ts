@@ -12,7 +12,7 @@ export async function getTransacciones(
   let query = supabase
     .from('transacciones')
     .select('*, categorias(nombre, icono)', { count: 'exact' })
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
     .order('fecha', { ascending: false })
 
   if (filtros.tipo && filtros.tipo !== 'todos') {
@@ -61,7 +61,7 @@ export async function updateTransaccion(
     .from('transacciones')
     .update(data)
     .eq('id', id)
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
     .select('*, categorias(nombre, icono)')
     .single()
   if (error) throw error
@@ -73,7 +73,7 @@ export async function deleteTransaccion(id: string, userId: string): Promise<voi
     .from('transacciones')
     .delete()
     .eq('id', id)
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
   if (error) throw error
 }
 
@@ -84,7 +84,7 @@ export async function exportarTransacciones(
   let query = supabase
     .from('transacciones')
     .select('fecha, tipo, monto, descripcion, categorias(nombre)')
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
     .order('fecha', { ascending: false })
 
   if (filtros.tipo && filtros.tipo !== 'todos') {

@@ -4,6 +4,7 @@ import { usePresupuestos } from '@/hooks/usePresupuestos'
 import { useCategorias } from '@/hooks/useCategorias'
 import { formatMoneda } from '@/utils/formatMoneda'
 import { MESES } from '@/utils/constants'
+import { formValidators, hasErrors, getFieldError } from '@/utils/validationHelpers'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import Modal from '@/components/ui/Modal'
@@ -24,8 +25,15 @@ export default function Presupuestos() {
   const [deleteModal, setDeleteModal] = useState<string | null>(null)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ categoria_id: '', monto_limite: '' })
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const categoriasOpciones = categorias.map((c) => ({ value: c.id, label: `${c.icono} ${c.nombre}` }))
+
+  const validarFormulario = (formData: typeof form) => {
+    const nuevosErrores = formValidators.presupuesto(formData)
+    setErrors(nuevosErrores)
+    return !hasErrors(nuevosErrores)
+  }
 
   const totalGastado = presupuestos.reduce((acc, p) => acc + Number(p.gastado || 0), 0)
   const totalLimite = presupuestos.reduce((acc, p) => acc + Number(p.monto_limite || 0), 0)
@@ -59,7 +67,7 @@ export default function Presupuestos() {
   }
 
   const handleSubmit = async () => {
-    if (!form.categoria_id || !form.monto_limite) return
+    if (!validarFormulario(form)) return
     try {
       if (editId) {
         await actualizar(editId, { monto_limite: parseFloat(form.monto_limite) })
@@ -67,6 +75,7 @@ export default function Presupuestos() {
         await crear({ categoria_id: form.categoria_id, monto_limite: parseFloat(form.monto_limite) })
       }
       setModalOpen(false)
+      setErrors({})
     } catch {
       // handled by hook
     }
@@ -251,12 +260,23 @@ export default function Presupuestos() {
       </div>
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editId ? 'Editar Limite' : 'Asignar Presupuesto'} size="md"
-        footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={handleSubmit}>{editId ? 'Guardar' : 'Confirmar'}</Button></>}>
+        footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={handleSubmit} disabled={hasErrors(errors)}>{editId ? 'Guardar' : 'Confirmar'}</Button></>}>
         <div className="space-y-6">
           {!editId && <Select id="pres-cat" label="Selecciona la Categoria" options={categoriasOpciones} value={form.categoria_id}
-            onChange={(e) => setForm((f) => ({ ...f, categoria_id: e.target.value }))} />}
+            error={getFieldError(errors, 'categoria_id')}
+            onChange={(e) => {
+              const newForm = { ...form, categoria_id: e.target.value }
+              setForm(newForm)
+              validarFormulario(newForm)
+            }} />}
           <Input id="pres-monto" label="Cual es tu limite? (COP)" type="number" placeholder="Ej. 100000"
-            value={form.monto_limite} onChange={(e) => setForm((f) => ({ ...f, monto_limite: e.target.value }))} />
+            error={getFieldError(errors, 'monto_limite')}
+            value={form.monto_limite} 
+            onChange={(e) => {
+              const newForm = { ...form, monto_limite: e.target.value }
+              setForm(newForm)
+              validarFormulario(newForm)
+            }} />
         </div>
       </Modal>
 

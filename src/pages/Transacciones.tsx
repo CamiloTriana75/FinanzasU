@@ -7,6 +7,7 @@ import { exportarTransacciones } from '@/services/transaccionesService'
 import { exportCSV } from '@/utils/exportCSV'
 import { formatMoneda } from '@/utils/formatMoneda'
 import { formatFechaCorta, formatFechaInput } from '@/utils/dateHelpers'
+import { formValidators, hasErrors, getFieldError } from '@/utils/validationHelpers'
 import type { TipoTransaccion, TipoFiltro, Transaccion } from '@/types'
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
@@ -28,12 +29,19 @@ export default function Transacciones() {
   const [editando, setEditando] = useState<Transaccion | null>(null)
   const [form, setForm] = useState({ monto: '', tipo: 'gasto' as TipoTransaccion, categoria_id: '', descripcion: '', fecha: formatFechaInput(new Date()) })
   const [exportLoading, setExportLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const categoriasOpciones = categorias
     .filter((c) => c.tipo === form.tipo)
     .map((c) => ({ value: c.id, label: `${c.icono} ${c.nombre}` }))
 
   const categoriasGasto = categorias.filter((c) => c.tipo === 'gasto')
+
+  const validarFormulario = (formData: typeof form) => {
+    const nuevosErrores = formValidators.transaccion(formData)
+    setErrors(nuevosErrores)
+    return !hasErrors(nuevosErrores)
+  }
 
   const transaccionesFiltradas = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
@@ -59,7 +67,7 @@ export default function Transacciones() {
   }
 
   const handleSubmit = async () => {
-    if (!form.monto || !form.categoria_id || !form.fecha) { toast.error('Completa los campos obligatorios'); return }
+    if (!validarFormulario(form)) return
     try {
       if (editando) {
         await actualizar(editando.id, { ...form, monto: parseFloat(form.monto) })
@@ -67,6 +75,7 @@ export default function Transacciones() {
         await crear({ ...form, monto: parseFloat(form.monto) })
       }
       setModalOpen(false)
+      setErrors({})
     } catch { /* handled by hook */ }
   }
 
@@ -290,7 +299,7 @@ export default function Transacciones() {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editando ? 'Editar Transacción' : 'Nueva Transacción'}
         footer={<>
           <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button>
-          <Button onClick={handleSubmit}>{editando ? 'Guardar Cambios' : 'Crear'}</Button>
+          <Button onClick={handleSubmit} disabled={hasErrors(errors)}>{editando ? 'Guardar Cambios' : 'Crear'}</Button>
         </>}>
         <div className="space-y-5">
           <div className="flex gap-3 bg-surface-container p-1.5 rounded-xl">
@@ -304,13 +313,28 @@ export default function Transacciones() {
             ))}
           </div>
           <Input id="tx-monto" label="Monto (COP)" type="number" placeholder="50000" value={form.monto}
-            onChange={(e) => setForm((f) => ({ ...f, monto: e.target.value }))} />
+            error={getFieldError(errors, 'monto')}
+            onChange={(e) => {
+              const newForm = { ...form, monto: e.target.value }
+              setForm(newForm)
+              validarFormulario(newForm)
+            }} />
           <Select id="tx-categoria" label="Categoría" options={categoriasOpciones} value={form.categoria_id}
-            onChange={(e) => setForm((f) => ({ ...f, categoria_id: e.target.value }))} />
+            error={getFieldError(errors, 'categoria_id')}
+            onChange={(e) => {
+              const newForm = { ...form, categoria_id: e.target.value }
+              setForm(newForm)
+              validarFormulario(newForm)
+            }} />
           <Input id="tx-desc" label="Descripción (opcional)" placeholder="Ej. Almuerzo, Transporte"
             value={form.descripcion} onChange={(e) => setForm((f) => ({ ...f, descripcion: e.target.value }))} />
           <Input id="tx-fecha" label="Fecha" type="date" value={form.fecha}
-            onChange={(e) => setForm((f) => ({ ...f, fecha: e.target.value }))} />
+            error={getFieldError(errors, 'fecha')}
+            onChange={(e) => {
+              const newForm = { ...form, fecha: e.target.value }
+              setForm(newForm)
+              validarFormulario(newForm)
+            }} />
         </div>
       </Modal>
 

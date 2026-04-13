@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Plus, Trash2, Pencil, Search, ArrowRight } from 'lucide-react'
 import { useCategorias } from '@/hooks/useCategorias'
 import { EMOJIS_DISPONIBLES } from '@/utils/constants'
+import { formValidators, hasErrors, getFieldError } from '@/utils/validationHelpers'
 import type { TipoTransaccion } from '@/types'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
@@ -16,6 +17,7 @@ export default function Categorias() {
   const [deleteModal, setDeleteModal] = useState<string | null>(null)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ nombre: '', tipo: 'gasto' as TipoTransaccion, icono: '📂' })
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const categoriasVisibles = useMemo(() => {
     const term = search.trim().toLowerCase()
@@ -38,16 +40,23 @@ export default function Categorias() {
     return opciones[index % opciones.length]
   }
 
+  const validarFormulario = (formData: typeof form) => {
+    const nuevosErrores = formValidators.categoria(formData)
+    setErrors(nuevosErrores)
+    return !hasErrors(nuevosErrores)
+  }
+
   const abrirCrear = () => { setEditId(null); setForm({ nombre: '', tipo: 'gasto', icono: '📂' }); setModalOpen(true) }
   const abrirEditar = (id: string, nombre: string, tipo: TipoTransaccion, icono: string) => {
     setEditId(id); setForm({ nombre, tipo, icono }); setModalOpen(true)
   }
 
   const handleSubmit = async () => {
-    if (!form.nombre.trim()) return
+    if (!validarFormulario(form)) return
     try {
       if (editId) { await actualizar(editId, form) } else { await crear(form) }
       setModalOpen(false)
+      setErrors({})
     } catch { /* handled */ }
   }
 
@@ -240,10 +249,15 @@ export default function Categorias() {
 
       {/* Modal */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editId ? 'Editar categoría' : 'Nueva categoría'} size="md"
-        footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={handleSubmit}>{editId ? 'Guardar' : 'Crear categoría'}</Button></>}>
+        footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={handleSubmit} disabled={hasErrors(errors)}>{editId ? 'Guardar' : 'Crear categoría'}</Button></>}>
         <div className="space-y-6">
           <Input id="cat-nombre" label="Nombre de la categoría" placeholder="Ej. Suscripciones" value={form.nombre}
-            onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))} />
+            error={getFieldError(errors, 'nombre')}
+            onChange={(e) => {
+              const newForm = { ...form, nombre: e.target.value }
+              setForm(newForm)
+              validarFormulario(newForm)
+            }} />
           <div className="space-y-2">
             <span className="block text-sm font-semibold text-on-surface ml-1">Tipo</span>
             <div className="flex gap-3 bg-surface-container p-1.5 rounded-xl">

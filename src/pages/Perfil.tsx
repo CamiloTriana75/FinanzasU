@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { User, Mail, Lock, Shield, School, BellRing, Star, BadgeCheck, Trash2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { updateProfile, updatePassword } from '@/services/authService'
+import { formValidators, hasErrors, getFieldError } from '@/utils/validationHelpers'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import toast from 'react-hot-toast'
@@ -16,27 +17,43 @@ export default function Perfil() {
   const [alertsDiarias, setAlertsDiarias] = useState(true)
   const [resumenSemanal, setResumenSemanal] = useState(true)
   const [novedadesSistema, setNovedadesSistema] = useState(false)
+  const [profileErrors, setProfileErrors] = useState<Record<string, string>>({})
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({})
+
+  // Validar en tiempo real - Perfil
+  const validarPerfil = (nombreData: string) => {
+    const nuevosErrores = formValidators.perfil({ nombre: nombreData })
+    setProfileErrors(nuevosErrores)
+    return !hasErrors(nuevosErrores)
+  }
+
+  // Validar en tiempo real - Contraseña
+  const validarPassword = (pwd: string, confirmPwd: string) => {
+    const nuevosErrores = formValidators.password({ newPassword: pwd, confirmPassword: confirmPwd })
+    setPasswordErrors(nuevosErrores)
+    return !hasErrors(nuevosErrores)
+  }
 
   const handleUpdateProfile = async (e: FormEvent) => {
     e.preventDefault()
-    if (!nombre.trim()) { toast.error('El nombre no puede estar vacío'); return }
+    if (!validarPerfil(nombre)) return
     try {
       setProfileLoading(true)
       await updateProfile(nombre)
       toast.success('Perfil actualizado')
+      setProfileErrors({})
     } catch { toast.error('Error al actualizar perfil') }
     finally { setProfileLoading(false) }
   }
 
   const handleUpdatePassword = async (e: FormEvent) => {
     e.preventDefault()
-    if (newPassword.length < 6) { toast.error('La contraseña debe tener mínimo 6 caracteres'); return }
-    if (newPassword !== confirmPassword) { toast.error('Las contraseñas no coinciden'); return }
+    if (!validarPassword(newPassword, confirmPassword)) return
     try {
       setPasswordLoading(true)
       await updatePassword(newPassword)
       toast.success('Contraseña actualizada')
-      setNewPassword(''); setConfirmPassword('')
+      setNewPassword(''); setConfirmPassword(''); setPasswordErrors({})
     } catch { toast.error('Error al cambiar contraseña') }
     finally { setPasswordLoading(false) }
   }
@@ -83,14 +100,24 @@ export default function Perfil() {
             <form onSubmit={handleUpdateProfile} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2 sm:col-span-2">
                 <label className="text-[10px] uppercase font-bold text-outline tracking-widest px-1">Nombre completo</label>
-                <Input id="perfil-nombre" icon={User} value={nombre} onChange={(e) => setNombre(e.target.value)} />
+                <Input 
+                  id="perfil-nombre" 
+                  icon={User} 
+                  value={nombre}
+                  error={getFieldError(profileErrors, 'nombre')}
+                  onChange={(e) => {
+                    const newNombre = e.target.value
+                    setNombre(newNombre)
+                    validarPerfil(newNombre)
+                  }} 
+                />
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <label className="text-[10px] uppercase font-bold text-outline tracking-widest px-1">Correo universitario</label>
                 <Input id="perfil-email" icon={Mail} value={userEmail} disabled className="opacity-80 bg-surface-container-low" />
               </div>
               <div className="sm:col-span-2">
-                <Button type="submit" loading={profileLoading} size="md">Guardar datos personales</Button>
+                <Button type="submit" loading={profileLoading} size="md" disabled={hasErrors(profileErrors)}>Guardar datos personales</Button>
               </div>
             </form>
           </div>
@@ -127,7 +154,12 @@ export default function Perfil() {
                 icon={Lock}
                 placeholder="Mínimo 6 caracteres"
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                error={getFieldError(passwordErrors, 'newPassword')}
+                onChange={(e) => {
+                  const newPwd = e.target.value
+                  setNewPassword(newPwd)
+                  validarPassword(newPwd, confirmPassword)
+                }}
               />
               <Input
                 id="perfil-confirm-pwd"
@@ -136,11 +168,16 @@ export default function Perfil() {
                 icon={Lock}
                 placeholder="Repite tu nueva clave"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                error={getFieldError(passwordErrors, 'confirmPassword')}
+                onChange={(e) => {
+                  const confirmPwd = e.target.value
+                  setConfirmPassword(confirmPwd)
+                  validarPassword(newPassword, confirmPwd)
+                }}
               />
 
               <div className="flex flex-col md:flex-row md:items-center gap-4 pt-2">
-                <Button type="submit" loading={passwordLoading} variant="danger" size="md">Cambiar clave</Button>
+                <Button type="submit" loading={passwordLoading} variant="danger" size="md" disabled={hasErrors(passwordErrors)}>Cambiar clave</Button>
                 <button type="button" className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-error/15 text-error hover:bg-error hover:text-white rounded-2xl font-bold text-sm transition-all">
                   <Trash2 className="w-4 h-4" /> Cerrar cuenta
                 </button>

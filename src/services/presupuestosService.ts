@@ -9,7 +9,7 @@ export async function getPresupuestos(
   const { data: presupuestos, error: pError } = await supabase
     .from('presupuestos')
     .select('*, categorias(nombre, icono)')
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
     .eq('mes', mes)
     .eq('anio', anio)
     .order('created_at')
@@ -20,7 +20,7 @@ export async function getPresupuestos(
   const { data: gastos, error: gError } = await supabase
     .from('transacciones')
     .select('categoria_id, monto')
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
     .eq('tipo', 'gasto')
     .gte('fecha', `${anio}-${String(mes).padStart(2, '0')}-01`)
     .lte('fecha', `${anio}-${String(mes).padStart(2, '0')}-31`)
@@ -71,7 +71,7 @@ export async function updatePresupuesto(
     .from('presupuestos')
     .update(data)
     .eq('id', id)
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
     .select('*, categorias(nombre, icono)')
     .single()
   if (error) throw error
@@ -83,6 +83,6 @@ export async function deletePresupuesto(id: string, userId: string): Promise<voi
     .from('presupuestos')
     .delete()
     .eq('id', id)
-    .eq('usuario_id', userId)
+    .eq('user_id', userId)
   if (error) throw error
 }

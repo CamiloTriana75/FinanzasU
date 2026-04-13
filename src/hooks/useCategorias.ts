@@ -47,7 +47,7 @@ export function useCategorias(tipo?: TipoTransaccion) {
   const crear = async (data: Partial<Categoria>) => {
     if (!userId) return
     try {
-      await categoriasService.createCategoria({ ...data, usuario_id: userId })
+      await categoriasService.createCategoria({ ...data, user_id: userId })
       toast.success('Categoría creada')
       cargar()
     } catch (err) {

@@ -55,11 +55,11 @@ export function usePresupuestos(mes?: number, anio?: number) {
 
   useEffect(() => { cargar() }, [cargar])
 
-  const crear = async (data: Omit<PresupuestoInput, 'usuario_id' | 'mes' | 'anio'>) => {
+  const crear = async (data: Omit<PresupuestoInput, 'user_id' | 'mes' | 'anio'>) => {
     if (!userId) return
     try {
       await presupuestosService.createPresupuesto({
-        ...data, usuario_id: userId, mes: mesActual, anio: anioActual,
+        ...data, user_id: userId, mes: mesActual, anio: anioActual,
       })
       toast.success('Presupuesto creado')
       cargar()

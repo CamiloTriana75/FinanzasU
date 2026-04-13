@@ -59,10 +59,10 @@ export function useTransacciones() {
 
   useEffect(() => { cargar(1) }, [cargar])
 
-  const crear = async (data: Omit<TransaccionInput, 'usuario_id'>) => {
+  const crear = async (data: Omit<TransaccionInput, 'user_id'>) => {
     if (!userId || isLocalAuthMode) return
     try {
-      await transaccionesService.createTransaccion({ ...data, usuario_id: userId })
+      await transaccionesService.createTransaccion({ ...data, user_id: userId })
       toast.success('Transacción registrada')
       cargar(paginacion.paginaActual)
     } catch (err) {

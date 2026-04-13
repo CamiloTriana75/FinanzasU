@@ -11,6 +11,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
   )
 }
 
+// Debug: Verification of loaded credentials
+console.log('📊 Supabase Connection Status:', {
+  url: supabaseUrl ? '✅ Loaded' : '❌ Missing',
+  key: supabaseAnonKey ? '✅ Loaded' : '❌ Missing',
+  authMode: import.meta.env.VITE_AUTH_MODE || 'real (Supabase)',
+  urlPreview: supabaseUrl?.substring(0, 30) + '...',
+})
+
 export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-key',

@@ -10,7 +10,7 @@ export type TipoFiltro = 'todos' | 'ingreso' | 'gasto'
 // ── Categoría ──
 export interface Categoria {
   id: string
-  usuario_id: string | null
+  user_id: string | null
   nombre: string
   tipo: TipoTransaccion
   icono: string
@@ -21,7 +21,7 @@ export interface Categoria {
 // ── Transacción ──
 export interface Transaccion {
   id: string
-  usuario_id: string
+  user_id: string
   categoria_id: string | null
   monto: number
   tipo: TipoTransaccion
@@ -35,7 +35,7 @@ export interface Transaccion {
 }
 
 export interface TransaccionInput {
-  usuario_id: string
+  user_id: string
   categoria_id: string
   monto: number
   tipo: TipoTransaccion
@@ -46,7 +46,7 @@ export interface TransaccionInput {
 // ── Presupuesto ──
 export interface Presupuesto {
   id: string
-  usuario_id: string
+  user_id: string
   categoria_id: string
   monto_limite: number
   mes: number
@@ -66,7 +66,7 @@ export interface PresupuestoConGasto extends Presupuesto {
 }
 
 export interface PresupuestoInput {
-  usuario_id: string
+  user_id: string
   categoria_id: string
   monto_limite: number
   mes: number
