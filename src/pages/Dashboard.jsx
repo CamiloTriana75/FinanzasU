@@ -20,6 +20,7 @@ import {
   Wallet
 } from 'lucide-react'
 import ModalDeposito from '../components/ui/ModalDeposito'
+import MetaAhorroCard from '../components/ui/MetaAhorroCard'
 
 // ─── Helpers ─────────────────────────────────────────────────────
 function formatMoney(n) {
@@ -512,6 +513,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* ─── Meta de Ahorro Mensual ─────────────────────────────────── */}
+      <MetaAhorroCard />
 
       {/* ─── Transacciones Recientes ───────────────────────────────── */}
       <div className="space-y-4">

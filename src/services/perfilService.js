@@ -57,4 +57,48 @@ export async function guardarContextoAcademico(userId, { semestre_actual, total_
   return data
 }
 
+/**
+ * Obtiene la meta de ahorro mensual del usuario.
+ * Devuelve 0 si aún no ha configurado ninguna meta.
+ */
+export async function obtenerMetaAhorro(userId) {
+  const { data, error } = await supabase
+    .from('perfiles')
+    .select('meta_ahorro_mensual')
+    .eq('id', userId)
+    .maybeSingle()
+
+  if (error) throw error
+  return Number(data?.meta_ahorro_mensual ?? 0)
+}
+
+/**
+ * Guarda la meta de ahorro mensual del usuario.
+ * Valida que el monto sea un número positivo y razonable (máx. 999,999,999).
+ *
+ * @param {string} userId - ID del usuario
+ * @param {number} monto  - Nueva meta de ahorro mensual
+ */
+export async function guardarMetaAhorro(userId, monto) {
+  const montoNum = Number(monto)
+
+  if (!Number.isFinite(montoNum) || montoNum < 0) {
+    throw new Error('La meta de ahorro debe ser un número igual o mayor a 0.')
+  }
+
+  if (montoNum > 999_999_999) {
+    throw new Error('La meta de ahorro no puede exceder 999,999,999.')
+  }
+
+  const { data, error } = await supabase
+    .from('perfiles')
+    .update({ meta_ahorro_mensual: montoNum })
+    .eq('id', userId)
+    .select('meta_ahorro_mensual')
+    .single()
+
+  if (error) throw error
+  return Number(data.meta_ahorro_mensual)
+}
+
 export { SEMESTRES_OPCIONES, MAX_SEMESTRES, ESTADOS_VALIDOS }
