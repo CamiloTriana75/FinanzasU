@@ -11,6 +11,7 @@ import {
 import { useNotificationsContext } from './NotificationsContext'
 import { useLogrosContext } from './LogrosContext'
 import { normalizarUmbralAlertaPct } from '../utils/presupuestoStatus'
+import { obtenerMetaAhorro, guardarMetaAhorro } from '../services/perfilService'
 
 const AppDataContext = createContext(null)
 
@@ -91,6 +92,7 @@ export function AppDataProvider({ children }) {
   const [categorias, setCategorias] = useState([])
   const [transacciones, setTransacciones] = useState([])
   const [presupuestos, setPresupuestos] = useState([])
+  const [metaAhorro, setMetaAhorro] = useState(0)
   const [cargandoDatos, setCargandoDatos] = useState(false)
   const [errorGlobal, setErrorGlobal] = useState('')
 
@@ -98,6 +100,7 @@ export function AppDataProvider({ children }) {
     setCategorias([])
     setTransacciones([])
     setPresupuestos([])
+    setMetaAhorro(0)
     setErrorGlobal('')
     setCargandoDatos(false)
   }, [])
@@ -112,15 +115,17 @@ export function AppDataProvider({ children }) {
     setErrorGlobal('')
 
     try {
-      const [categoriasData, transaccionesData, presupuestosData] = await Promise.all([
+      const [categoriasData, transaccionesData, presupuestosData, metaAhorroData] = await Promise.all([
         listarCategorias(usuario.id),
         listarTransacciones(usuario.id),
-        listarPresupuestos(usuario.id)
+        listarPresupuestos(usuario.id),
+        obtenerMetaAhorro(usuario.id)
       ])
 
       setCategorias(categoriasData)
       setTransacciones(transaccionesData)
       setPresupuestos(presupuestosData)
+      setMetaAhorro(metaAhorroData)
     } catch (error) {
       setErrorGlobal(error.message || 'No se pudieron cargar los datos.')
     } finally {
@@ -403,6 +408,19 @@ export function AppDataProvider({ children }) {
     }
   }, [usuario?.id, presupuestos, transacciones, categorias, evaluarYActualizarLogros])
 
+  /**
+   * Actualiza la meta de ahorro mensual del usuario.
+   * Persiste el nuevo valor en Supabase y actualiza el estado local.
+   *
+   * @param {number} nuevoMonto - El nuevo monto de la meta (>= 0)
+   */
+  const actualizarMetaAhorro = useCallback(async (nuevoMonto) => {
+    if (!usuario?.id) throw new Error('Sesion invalida.')
+    const metaGuardada = await guardarMetaAhorro(usuario.id, nuevoMonto)
+    setMetaAhorro(metaGuardada)
+    return metaGuardada
+  }, [usuario?.id])
+
   const totales = useMemo(() => {
     const totalIngresos = transacciones
       .filter((t) => t.tipo === 'ingreso')
@@ -423,6 +441,7 @@ export function AppDataProvider({ children }) {
     categorias,
     transacciones,
     presupuestos,
+    metaAhorro,
     cargandoDatos,
     errorGlobal,
     totales,
@@ -437,11 +456,13 @@ export function AppDataProvider({ children }) {
     crearPresupuesto,
     actualizarPresupuesto,
     eliminarPresupuesto,
+    actualizarMetaAhorro,
     limpiarEstado
   }), [
     categorias,
     transacciones,
     presupuestos,
+    metaAhorro,
     cargandoDatos,
     errorGlobal,
     totales,
@@ -455,6 +476,7 @@ export function AppDataProvider({ children }) {
     crearPresupuesto,
     actualizarPresupuesto,
     eliminarPresupuesto,
+    actualizarMetaAhorro,
     limpiarEstado
   ])
 
