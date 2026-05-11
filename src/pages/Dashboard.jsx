@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useInitialData } from '../hooks/useInitialData'
 import { useAppDataContext } from '../context/AppDataContext'
@@ -19,6 +19,7 @@ import {
   CreditCard,
   Wallet
 } from 'lucide-react'
+import ModalDeposito from '../components/ui/ModalDeposito'
 
 // ─── Helpers ─────────────────────────────────────────────────────
 function formatMoney(n) {
@@ -78,6 +79,9 @@ export default function Dashboard() {
   const { usuario } = useAuth()
   const { transacciones, categorias, presupuestos, cargandoDatos, errorGlobal } = useInitialData()
   const { totales } = useAppDataContext()
+
+  // ── HU-19: estado del modal de depósito ──────────────────────────
+  const [modalDepositoAbierto, setModalDepositoAbierto] = useState(false)
 
   // Current month transactions
   const mesActual = useMemo(() => {
@@ -272,13 +276,14 @@ export default function Dashboard() {
               {formatMoney(totales.balance)}
             </h3>
             <div className="flex gap-4 flex-wrap">
-              <Link
-                to="/transacciones"
+              {/* ── HU-19: botón abre modal en vez de navegar ── */}
+              <button
+                onClick={() => setModalDepositoAbierto(true)}
                 className="bg-[#83fba5] text-[#00210c] px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 hover:opacity-90 transition-opacity"
               >
                 <Plus className="w-4 h-4" />
                 Depositar
-              </Link>
+              </button>
               <Link
                 to="/transacciones"
                 className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-white/20 transition-all"
@@ -584,6 +589,12 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* ─── HU-19: Modal de Depósito ──────────────────────────────── */}
+      <ModalDeposito
+        abierto={modalDepositoAbierto}
+        onCerrar={() => setModalDepositoAbierto(false)}
+      />
     </div>
   )
 }
