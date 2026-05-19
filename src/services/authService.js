@@ -1,4 +1,4 @@
-import { isSupabaseConfigured, supabase } from './supabaseClient'
+import { isSupabaseConfigured, supabase } from './supabaseClient.js'
 
 const MENSAJE_LOGIN_INVALIDO = 'Correo o contrasena incorrectos.'
 const MENSAJE_AUTH_GENERICO = 'No fue posible autenticarte. Intenta nuevamente.'
@@ -233,3 +233,6 @@ export async function solicitarRecuperacionContrasena({ email }) {
 
   return 'Si el correo esta registrado, recibiras un enlace de recuperacion en tu bandeja de entrada.'
 }
+
+// Exportar para pruebas unitarias (mapeo de errores)
+export { mapAuthError }

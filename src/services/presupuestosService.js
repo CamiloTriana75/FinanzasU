@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient'
+import { supabase } from './supabaseClient.js'
 import { calcularEstadoPresupuesto } from '../utils/presupuestoStatus'
 
 // ✅ FIX: Helper extraído para reutilizar en getPresupuestos y updatePresupuesto

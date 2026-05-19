@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient'
+import { supabase } from './supabaseClient.js'
 
 const MAX_SEMESTRES = 10
 const SEMESTRES_OPCIONES = Array.from({ length: MAX_SEMESTRES }, (_, i) => i + 1)
