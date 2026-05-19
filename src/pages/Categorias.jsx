@@ -525,7 +525,7 @@ export default function Categorias() {
       </div>
 
       <section className="grid grid-cols-12 gap-8">
-        <div className="col-span-12 lg:col-span-8 bg-[#24389c] rounded-3xl p-10 text-white relative overflow-hidden flex flex-col justify-between min-h-[280px]">
+        <div className="col-span-12 bg-[#24389c] rounded-3xl p-10 text-white relative overflow-hidden flex flex-col justify-between min-h-[280px]">
           <div className="relative z-10">
             <p className="font-bold text-white/60 tracking-wider uppercase text-xs mb-2">
               Panorama de categorias
@@ -566,24 +566,6 @@ export default function Categorias() {
               src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=1200&auto=format&fit=crop"
             />
           </div>
-        </div>
-
-        <div className="col-span-12 lg:col-span-4 bg-[#83fba5] rounded-3xl p-8 flex flex-col justify-center border border-[#006d36]/15">
-          <div className="mb-6">
-            <TrendingUp className="text-[#005227] w-10 h-10 mb-4" />
-            <h4 className="text-[#005227] text-xl font-bold">Sugerencia de optimizacion</h4>
-          </div>
-
-          <p className="text-[#005227]/85 text-sm leading-relaxed mb-6">
-            Revisa categorias con poco uso para simplificar tu panel y mantener foco en los rubros que realmente impactan tus finanzas.
-          </p>
-
-          <button
-            type="button"
-            className="bg-[#006d36] text-white py-3 px-6 rounded-xl font-bold text-sm self-start hover:opacity-90 transition-opacity"
-          >
-            Ajustar estrategia
-          </button>
         </div>
       </section>
 

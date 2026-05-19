@@ -333,16 +333,16 @@
 > Como estudiante, quiero recibir correos claros y confiables para verificar mi cuenta y recuperar mi contraseña, para completar mi acceso de forma segura y sin confusiones.
 
 ### Criterios de aceptación
-- [ ] Se configura un template de correo para verificación de cuenta con identidad visual de la aplicación (logo, nombre y estilo).
-- [ ] Se configura un template de correo para recuperación de contraseña con identidad visual consistente.
-- [ ] Ambos correos incluyen asunto, preencabezado y contenido en español con instrucciones claras.
-- [ ] Los templates usan variables dinámicas del sistema (nombre de usuario si existe, enlace seguro y tiempo de expiración).
-- [ ] Cada correo incluye un botón principal de acción y un enlace alternativo en texto plano.
-- [ ] El enlace de verificación redirige correctamente al flujo de confirmación de cuenta y el de recuperación al flujo de cambio de contraseña.
-- [ ] Se valida visualización responsive en móvil y escritorio, y compatibilidad básica con clientes de correo comunes.
-- [ ] Se prueban ambos flujos de extremo a extremo y se confirma que los correos llegan correctamente.
-- [ ] Los templates incluyen advertencias de seguridad y canal de soporte para reportar actividad no reconocida.
-- [ ] Se contemplan mensajes de error en caso de fallo de envío y reintento desde la interfaz.
+- [x] Se configura un template de correo para verificación de cuenta con identidad visual de la aplicación (logo, nombre y estilo).
+- [x] Se configura un template de correo para recuperación de contraseña con identidad visual consistente.
+- [x] Ambos correos incluyen asunto, preencabezado y contenido en español con instrucciones claras.
+- [x] Los templates usan variables dinámicas del sistema (nombre de usuario si existe, enlace seguro y tiempo de expiración).
+- [x] Cada correo incluye un botón principal de acción y un enlace alternativo en texto plano.
+- [x] El enlace de verificación redirige correctamente al flujo de confirmación de cuenta y el de recuperación al flujo de cambio de contraseña.
+- [x] Se valida visualización responsive en móvil y escritorio, y compatibilidad básica con clientes de correo comunes.
+- [x] Se prueban ambos flujos de extremo a extremo y se confirma que los correos llegan correctamente.
+- [x] Los templates incluyen advertencias de seguridad y canal de soporte para reportar actividad no reconocida.
+- [x] Se contemplan mensajes de error en caso de fallo de envío y reintento desde la interfaz.
 
 ### Definition of Ready
 - Proveedor de correo transaccional configurado y operativo.
@@ -451,12 +451,12 @@ Esta nota se añade como registro de revisión para HU-21; el cumplimiento parci
 > Como usuario, quiero establecer una meta de ahorro mensual desde el dashboard y el módulo de presupuestos, para monitorear mi progreso y ahorrar de forma constante.
 
 ### Criterios de aceptación
-- [ ] El usuario puede definir o editar la meta de ahorro mensual desde el dashboard.
-- [ ] La meta también se puede ver y ajustar desde la vista de presupuestos.
-- [ ] El dashboard muestra el avance actual en porcentaje y monto ahorrado.
-- [ ] El sistema compara el ahorro real con la meta y muestra estado (cumplido, en progreso, riesgo).
-- [ ] Se valida que el monto de la meta sea positivo y razonable.
-- [ ] El dato persiste y se refleja en ambas vistas sin inconsistencias.
+- [x] El usuario puede definir o editar la meta de ahorro mensual desde el dashboard.
+- [x] La meta también se puede ver y ajustar desde la vista de presupuestos.
+- [x] El dashboard muestra el avance actual en porcentaje y monto ahorrado.
+- [x] El sistema compara el ahorro real con la meta y muestra estado (cumplido, en progreso, riesgo).
+- [x] Se valida que el monto de la meta sea positivo y razonable.
+- [x] El dato persiste y se refleja en ambas vistas sin inconsistencias.
 
 ### Definition of Ready
 - Requisitos de campos y validaciones de la meta definidos.
@@ -464,3 +464,103 @@ Esta nota se añade como registro de revisión para HU-21; el cumplimiento parci
 - Diseño de UI para definir y mostrar la meta aprobado.
 - Criterios de prueba para guardar meta, mostrar avance y sincronización dashboard-presupuestos.
 - Condiciones de error y mensajes del usuario documentados.
+
+---
+
+## HU-23 — Restricción de Gastos por Capital Disponible (3 Story Points)
+
+> Como estudiante, quiero que el sistema valide mi capital disponible antes de registrar un gasto, para evitar inconsistencias y no tener saldos negativos irreales en mis finanzas.
+
+### Criterios de aceptación
+- [ ] Al registrar un nuevo gasto, el sistema verifica que el monto no exceda el balance total disponible (Ingresos Totales - Gastos Totales).
+- [ ] Si el gasto excede el capital disponible, se muestra un mensaje de error claro (ej. "Fondos insuficientes") y se bloquea la transacción.
+- [ ] La validación debe aplicar tanto en la creación de nuevos gastos como al editar el monto de un gasto existente.
+- [ ] Los ingresos no tienen esta restricción y siempre pueden ser registrados.
+- [ ] La interfaz debe reflejar el error en el formulario antes de enviarlo a la base de datos.
+
+### Definition of Ready
+- Lógica para calcular el balance actual integrada en el validador del formulario.
+- Textos de error de fondos insuficientes aprobados.
+
+---
+
+## HU-24 — Estabilidad del Sistema y Pruebas Unitarias (Deuda Técnica) (6 Story Points)
+
+> Como desarrollador, quiero implementar pruebas unitarias automatizadas para la lógica de negocio crítica, para asegurar que el sistema calcula correctamente las finanzas y no introducimos errores nuevos (regresiones).
+
+### Criterios de aceptación
+- [ ] Se implementan pruebas unitarias exhaustivas para `logrosEngine.js` (evaluación correcta de todas las condiciones de logros).
+- [ ] Se implementan pruebas unitarias para `validationHelpers.js` (validaciones de montos, fechas, correos, etc.).
+- [ ] Se implementan pruebas unitarias para el mapeo de errores en `authService.js`.
+- [ ] Se implementan pruebas para la lógica de formateo y exportación (`exportarCSV.js`, `exportarExcel.js`).
+- [ ] Al ejecutar `npm test`, se ejecutan exitosamente al menos 8 suites de pruebas.
+
+### Definition of Ready
+- Entorno de pruebas configurado (`vitest` o `node:test`).
+- Módulos a probar completamente aislados y definidos.
+
+---
+
+## HU-25 — Seguridad, Políticas RLS y Privacidad de Datos (3 Story Points)
+
+> Como estudiante, quiero que mi información financiera esté estrictamente protegida y tener control sobre mis datos, para confiar plenamente en la aplicación.
+
+### Criterios de aceptación
+- [ ] Se verifica e implementa política RLS (Row Level Security) en la tabla `preferencias_notificacion` (nadie puede leer preferencias ajenas).
+- [ ] El botón "Cerrar cuenta" en el Perfil implementa una eliminación real llamando a un endpoint seguro (o si está fuera de alcance, se oculta el botón temporalmente para no generar falsas expectativas).
+- [ ] El panel de notificaciones permite borrar notificaciones de forma individual o incluye un botón "Borrar todas las leídas".
+- [ ] Los archivos `.env` se eliminan del historial de Git por seguridad, dejando únicamente `.env.example`.
+
+### Definition of Ready
+- Políticas RLS definidas en SQL.
+- Confirmación de si se implementará el endpoint de eliminación de cuenta o si se ocultará el botón.
+
+---
+
+## HU-26 — Documentación Técnica y Preparación para Despliegue (2 Story Points)
+
+> Como equipo de desarrollo, queremos que la documentación del proyecto refleje exactamente la base de datos final, para que quede listo para el despliegue a producción y la calificación del proyecto.
+
+### Criterios de aceptación
+- [ ] Se actualiza el archivo `docs/diagrama-er.md` para incluir las tablas nuevas: `notificaciones`, `preferencias_notificacion`, `catalogo_logros` y `progreso_logros`.
+- [ ] Se actualiza el `README.md` con las estadísticas finales reales (porcentaje de completitud, cobertura de test).
+- [ ] El proyecto compila correctamente para producción (`npm run build`) sin errores de ESLint.
+- [ ] Se documentan los pasos de despliegue en Vercel, Netlify o la plataforma elegida en el README.
+
+### Definition of Ready
+- Código congelado y sin errores de linting.
+- Cuenta en plataforma de despliegue preparada.
+
+---
+
+## HU-27 — Despliegue en Entorno de Producción (3 Story Points)
+
+> Como usuario, quiero poder acceder a la aplicación desde cualquier dispositivo a través de una URL pública, para empezar a gestionar mis finanzas de manera real.
+
+### Criterios de aceptación
+- [ ] La aplicación se despliega exitosamente en una plataforma de hosting (ej. Vercel, Netlify o similar).
+- [ ] El entorno de producción está conectado a la base de datos de producción en Supabase (usando las variables de entorno correctas).
+- [ ] Se verifica que las rutas protegidas, la autenticación y los enlaces de recuperación de contraseña funcionan correctamente con la nueva URL pública.
+- [ ] La URL final es accesible, tiene certificado SSL activo (HTTPS) y no presenta errores de consola críticos.
+
+### Definition of Ready
+- Repositorio limpio y actualizado en la rama principal (`main` o `master`).
+- Variables de entorno de producción listas.
+- Cuentas de hosting creadas y enlazadas al repositorio.
+
+---
+
+## HU-28 — Pruebas de QA Integral y Reporte de Bugs (3 Story Points)
+
+> Como equipo de QA, queremos realizar pruebas exploratorias y flujos completos de principio a fin (End-to-End), para identificar, reportar y corregir cualquier error oculto antes de la entrega final.
+
+### Criterios de aceptación
+- [ ] Se realiza una prueba de flujo completo: Registro -> Crear Presupuesto -> Añadir Transacciones -> Verificar Logros -> Cerrar Sesión.
+- [ ] Se prueban casos extremos (ej. inputs negativos, fechas en el futuro, textos extremadamente largos).
+- [ ] Se registran todos los bugs encontrados en un tablero o documento de incidencias (Issue Tracker).
+- [ ] Los bugs bloqueantes o críticos son solucionados antes de marcar el sistema como 100% estable.
+- [ ] Se valida la correcta visualización en al menos dos navegadores diferentes (ej. Chrome y Firefox).
+
+### Definition of Ready
+- Entorno de staging o producción inicial disponible.
+- Formato o herramienta para reportar bugs (Jira, Trello, Excel) lista para usar.
