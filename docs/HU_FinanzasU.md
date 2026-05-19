@@ -489,15 +489,15 @@ Esta nota se añade como registro de revisión para HU-21; el cumplimiento parci
 > Como desarrollador, quiero implementar pruebas unitarias automatizadas para la lógica de negocio crítica, para asegurar que el sistema calcula correctamente las finanzas y no introducimos errores nuevos (regresiones).
 
 ### Criterios de aceptación
-- [ ] Se implementan pruebas unitarias exhaustivas para `logrosEngine.js` (evaluación correcta de todas las condiciones de logros).
-- [ ] Se implementan pruebas unitarias para `validationHelpers.js` (validaciones de montos, fechas, correos, etc.).
-- [ ] Se implementan pruebas unitarias para el mapeo de errores en `authService.js`.
-- [ ] Se implementan pruebas para la lógica de formateo y exportación (`exportarCSV.js`, `exportarExcel.js`).
-- [ ] Al ejecutar `npm test`, se ejecutan exitosamente al menos 8 suites de pruebas.
+- [x] Se implementan pruebas unitarias exhaustivas para `logrosEngine.js` (evaluación correcta de todas las condiciones de logros).
+- [x] Se implementan pruebas unitarias para `validationHelpers.js` (validaciones de montos, fechas, correos, etc.).
+- [x] Se implementan pruebas unitarias para el mapeo de errores en `authService.js`.
+- [x] Se implementan pruebas para la lógica de formateo y exportación (`exportarCSV.js`, `exportarExcel.js`).
+- [x] Al ejecutar `npm test`, se ejecutan exitosamente al menos 8 suites de pruebas.
 
 ### Definition of Ready
-- Entorno de pruebas configurado (`vitest` o `node:test`).
-- Módulos a probar completamente aislados y definidos.
+- [x] Entorno de pruebas configurado (`vitest` o `node:test`).
+- [x] Módulos a probar completamente aislados y definidos.
 
 ---
 
