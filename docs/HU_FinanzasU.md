@@ -472,15 +472,15 @@ Esta nota se añade como registro de revisión para HU-21; el cumplimiento parci
 > Como estudiante, quiero que el sistema valide mi capital disponible antes de registrar un gasto, para evitar inconsistencias y no tener saldos negativos irreales en mis finanzas.
 
 ### Criterios de aceptación
-- [ ] Al registrar un nuevo gasto, el sistema verifica que el monto no exceda el balance total disponible (Ingresos Totales - Gastos Totales).
-- [ ] Si el gasto excede el capital disponible, se muestra un mensaje de error claro (ej. "Fondos insuficientes") y se bloquea la transacción.
-- [ ] La validación debe aplicar tanto en la creación de nuevos gastos como al editar el monto de un gasto existente.
-- [ ] Los ingresos no tienen esta restricción y siempre pueden ser registrados.
-- [ ] La interfaz debe reflejar el error en el formulario antes de enviarlo a la base de datos.
+- [x] Al registrar un nuevo gasto, el sistema verifica que el monto no exceda el balance total disponible (Ingresos Totales - Gastos Totales).
+- [x] Si el gasto excede el capital disponible, se muestra un mensaje de error claro (ej. "Fondos insuficientes") y se bloquea la transacción.
+- [x] La validación debe aplicar tanto en la creación de nuevos gastos como al editar el monto de un gasto existente.
+- [x] Los ingresos no tienen esta restricción y siempre pueden ser registrados.
+- [x] La interfaz debe reflejar el error en el formulario antes de enviarlo a la base de datos.
 
 ### Definition of Ready
-- Lógica para calcular el balance actual integrada en el validador del formulario.
-- Textos de error de fondos insuficientes aprobados.
+- [x] Lógica para calcular el balance actual integrada en el validador del formulario.
+- [x] Textos de error de fondos insuficientes aprobados.
 
 ---
 
