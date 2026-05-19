@@ -16,7 +16,7 @@ import FiltrosTransacciones from '../components/ui/FiltrosTransacciones'
 import Paginacion from '../components/ui/Paginacion'
 import BotonExportarCSV from '../components/ui/BotonExportarCSV'
 import { formatMoneda } from '../utils/formatMoneda'
-import { validateTransaccionForm, hasErrors } from '../utils/validationHelpers'
+import { validateTransaccionForm, hasErrors, validateFondosSuficientes } from '../utils/validationHelpers'
 
 const INITIAL_FORM = {
   tipo: 'gasto',
@@ -101,6 +101,13 @@ export default function Transacciones() {
     const nextErrors = validateTransaccionForm(form)
     setErrors(nextErrors)
     if (hasErrors(nextErrors)) return
+
+    // Validacion de fondos antes de enviar (HU-23) — usa transacciones actuales y editando si aplica
+    const fondoErr = validateFondosSuficientes(transacciones, { tipo: form.tipo, monto: Number(form.monto), editando })
+    if (fondoErr) {
+      setErrors((p) => ({ ...p, monto: fondoErr }))
+      return
+    }
 
     setSaving(true)
     try {

@@ -48,6 +48,32 @@ export function validateTransaccionForm({ tipo, monto, categoria_id, fecha }) {
   return errors
 }
 
+/**
+ * Valida si hay fondos suficientes para crear/actualizar una transaccion.
+ * - transacciones: lista actual de transacciones (ingresos/gastos)
+ * - params: { tipo, monto, editando } donde editando es la transaccion previa (opcional)
+ * Devuelve null si hay fondos, o string con mensaje de error si no.
+ */
+export function validateFondosSuficientes(transacciones, { tipo, monto, editando = null }) {
+  const numMonto = Number(monto || 0)
+
+  // calcular balance actual (ingresos - gastos)
+  const balanceActual = transacciones.reduce((acc, t) => {
+    return acc + (t.tipo === 'ingreso' ? Number(t.monto || 0) : -Number(t.monto || 0))
+  }, 0)
+
+  const efectoPrev = editando
+    ? (editando.tipo === 'ingreso' ? Number(editando.monto || 0) : -Number(editando.monto || 0))
+    : 0
+
+  const efectoNuevo = tipo === 'ingreso' ? numMonto : -numMonto
+
+  const balanceDespues = balanceActual - efectoPrev + efectoNuevo
+
+  if (balanceDespues < 0 && tipo === 'gasto') return 'Fondos insuficientes'
+  return null
+}
+
 export function validateCategoriaForm({ nombre, tipo }) {
   const errors = {}
   const nombreErr = validateNombre(nombre)

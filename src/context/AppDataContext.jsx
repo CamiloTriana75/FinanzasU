@@ -8,6 +8,7 @@ import {
   updatePresupuesto as actualizarPresupuestoService,
   deletePresupuesto as eliminarPresupuestoService
 } from '../services/presupuestosService'
+import { validateFondosSuficientes } from '../utils/validationHelpers'
 import { useNotificationsContext } from './NotificationsContext'
 import { useLogrosContext } from './LogrosContext'
 import { normalizarUmbralAlertaPct } from '../utils/presupuestoStatus'
@@ -144,6 +145,12 @@ export function AppDataProvider({ children }) {
 
     setErrorGlobal('')
 
+    // Validar fondos disponibles antes de crear (HU-23)
+    const posibleError = validateFondosSuficientes(transacciones, { tipo, monto, editando: null })
+    if (posibleError) {
+      throw new Error(posibleError)
+    }
+
     const nuevaTransaccion = await crearTransaccionService({
       user_id: usuario.id,
       tipo,
@@ -213,6 +220,11 @@ export function AppDataProvider({ children }) {
     if (!usuario?.id) throw new Error('Sesion invalida.')
     setErrorGlobal('')
     const anterior = transacciones.find((t) => t.id === id)
+    // Validar fondos disponibles antes de actualizar (HU-23)
+    const posibleError = validateFondosSuficientes(transacciones, { tipo: data.tipo ?? anterior.tipo, monto: data.monto ?? anterior.monto, editando: anterior })
+    if (posibleError) {
+      throw new Error(posibleError)
+    }
     const actualizada = await actualizarTransaccionService(id, usuario.id, data)
 
     const nextTransacciones = transacciones.map((t) => (t.id === id ? actualizada : t))
