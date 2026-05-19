@@ -46,30 +46,32 @@ En el contexto académico, muchos estudiantes carecen de herramientas especializ
 
 ## ✨ Características Principales
 
-| Característica | Descripción | Estado |
-|---|---|---|
-| 🔐 **Autenticación Segura** | Login/Registro con encriptación y persistencia de sesión | ✅ |
-| 👤 **Gestión de Perfil** | Actualización de datos, contraseña y contexto académico | ✅ |
-| 💳 **Categorías Personalizadas** | Crear/editar categorías de ingresos y gastos | ✅ |
-| 💰 **Transacciones** | Registrar ingresos y gastos con filtros y paginación | ✅ |
-| 📊 **Presupuestos Inteligentes** | Establecer límites con alertas configurables al X% | ✅ |
-| 🎯 **Sistema de Logros** | Gamificación con badges por hitos financieros | ✅ |
-| 🔔 **Notificaciones** | Alertas de presupuestos, logros y transacciones | ✅ |
-| 📈 **Reportes Visuales** | Gráficos por categoría, exportación a CSV/Excel | ✅ |
-| 🎨 **Dashboard Intuitivo** | Resumen visual de finanzas y progreso | ✅ |
-| 🔍 **Análisis Avanzado** | Filtros por período, categoría y tipo de transacción | ✅ |
+| Característica                        | Descripción                                               | Estado |
+| -------------------------------------- | ---------------------------------------------------------- | ------ |
+| 🔐**Autenticación Segura**      | Login/Registro con encriptación y persistencia de sesión | ✅     |
+| 👤**Gestión de Perfil**         | Actualización de datos, contraseña y contexto académico | ✅     |
+| 💳**Categorías Personalizadas** | Crear/editar categorías de ingresos y gastos              | ✅     |
+| 💰**Transacciones**              | Registrar ingresos y gastos con filtros y paginación      | ✅     |
+| 📊**Presupuestos Inteligentes**  | Establecer límites con alertas configurables al X%        | ✅     |
+| 🎯**Sistema de Logros**          | Gamificación con badges por hitos financieros             | ✅     |
+| 🔔**Notificaciones**             | Alertas de presupuestos, logros y transacciones            | ✅     |
+| 📈**Reportes Visuales**          | Gráficos por categoría, exportación a CSV/Excel         | ✅     |
+| 🎨**Dashboard Intuitivo**        | Resumen visual de finanzas y progreso                      | ✅     |
+| 🔍**Análisis Avanzado**         | Filtros por período, categoría y tipo de transacción    | ✅     |
 
 ---
 
 ## 🎓 Objetivos del Proyecto
 
 ### Objetivos Generales
+
 1. **Educar financieramente** a estudiantes universitarios sobre buenas prácticas de gestión del dinero
 2. **Facilitar el control** de ingresos y gastos mediante una interfaz intuitiva
 3. **Promover la responsabilidad** financiera mediante alertas y feedback visual
 4. **Motivar cambios de conducta** a través de gamificación y logros
 
 ### Objetivos Específicos
+
 - ✅ Implementar un sistema de autenticación seguro con Supabase Auth
 - ✅ Desarrollar CRUD completo para transacciones, categorías y presupuestos
 - ✅ Crear sistema de notificaciones inteligentes basado en RLS
@@ -83,21 +85,25 @@ En el contexto académico, muchos estudiantes carecen de herramientas especializ
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
+
 ![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8.0-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.3-38B2AC?style=flat-square&logo=tailwindcss&logoColor=white)
 ![React Router](https://img.shields.io/badge/React%20Router-6.0-CA4245?style=flat-square&logo=reactrouter&logoColor=white)
 
 ### Backend & Base de Datos
+
 ![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791?style=flat-square&logo=postgresql&logoColor=white)
 
 ### Herramientas & Librerías
+
 ![Recharts](https://img.shields.io/badge/Recharts-Charts-ff7300?style=flat-square)
 ![XLSX](https://img.shields.io/badge/XLSX-Excel%20Export-217346?style=flat-square)
 ![Lucide Icons](https://img.shields.io/badge/Lucide-Icons-F4A460?style=flat-square)
 
 ### Desarrollo
+
 ![ESLint](https://img.shields.io/badge/ESLint-Linting-4B3B8C?style=flat-square&logo=eslint&logoColor=white)
 ![Node Test](https://img.shields.io/badge/Node%20Test-Testing-339933?style=flat-square&logo=node.js&logoColor=white)
 
@@ -109,11 +115,11 @@ En el contexto académico, muchos estudiantes carecen de herramientas especializ
 
 ```
 📅 Período de Desarrollo: Marzo 2026 - Mayo 2026
-💾 Commits Totales: 89+
+💾 Commits Totales: 92+
 👥 Contribuidores Activos: 7
-📝 Historias de Usuario: 21 (HU-01 a HU-21)
-✅ HUs Completadas: 21/21 (100%)
-🧪 Cobertura de Tests: 3+ suite ejecutadas
+📝 Historias de Usuario: 28 (HU-01 a HU-28)
+✅ HUs Completadas: 24/28 (85.7%)
+🧪 Tests ejecutados: 13
 ```
 
 ### 📈 Progreso del Proyecto
@@ -123,26 +129,26 @@ En el contexto académico, muchos estudiantes carecen de herramientas especializ
 #### Avance General
 
 ```
-Historias de Usuario     ████████████████████ 100% (21/21)
+Historias de Usuario     █████████████████░░░░  86% (24/28)
 Características Core     ████████████████████ 100% (10/10)
 Sistema de Notificaciones ████████████████████ 100% (3/3)
 Reportes & Exportación   ████████████████████ 100% (2/2)
-Documentación            ████████████████████ 100% (5/5)
-Testing & QA             ███████████░░░░░░░░░  60% (3/5)
+Documentación            ████████████████████ 100% (7/7)
+Testing & QA             ████████████████░░░░░  81% (13 pruebas)
 ```
 
 #### Estado por Componente
 
-| Componente | Avance | Commits | Contribuidor |
-|:---|:---:|:---:|:---|
-| **Auth & Seguridad** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) | 6 | Juan Camilo Triana |
-| **CRUD Transacciones** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) | 12 | Nicolás García |
-| **Presupuestos & Alertas** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) | 8 | Luis Pedraza |
-| **Sistema de Logros** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) | 10 | Deibyd Castillo |
-| **Notificaciones RLS** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) | 7 | Luis Pedraza |
-| **Dashboard & Reportes** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) | 15 | Deibyd Castillo |
-| **Contexto Académico** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) | 7 | Yerlin Álvarez |
-| **Filtros & Exportación** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) | 8 | Nicolás García |
+| Componente                       |                          Avance                          | Commits | Contribuidor       |
+| :------------------------------- | :-------------------------------------------------------: | :-----: | :----------------- |
+| **Auth & Seguridad**       | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) |    6    | Juan Camilo Triana |
+| **CRUD Transacciones**     | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) |   12   | Nicolás García   |
+| **Presupuestos & Alertas** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) |    8    | Luis Pedraza       |
+| **Sistema de Logros**      | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) |   10   | Deibyd Castillo    |
+| **Notificaciones RLS**     | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) |    7    | Luis Pedraza       |
+| **Dashboard & Reportes**   | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) |   15   | Deibyd Castillo    |
+| **Contexto Académico**    | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) |    7    | Yerlin Álvarez    |
+| **Filtros & Exportación** | ![100%](https://img.shields.io/badge/100%25-✅-brightgreen) |    8    | Nicolás García   |
 
 #### 📊 Cobertura de Funcionalidades
 
@@ -153,11 +159,11 @@ Testing & QA             ███████████░░░░░░░�
 🎯 Gamificación            ████████████████████ 100%
 🔔 Notificaciones          ████████████████████ 100%
 📱 Responsividad UI        ███████████████░░░░░  75%
-🧪 Cobertura de Tests      ███████████░░░░░░░░░  55%
+🧪 Cobertura de Tests      ████████████████░░░░░  81%
 📚 Documentación            ████████████████████ 100%
 ```
 
-**Resumen de Avance Global: 91% ✨**
+**Resumen de Avance Global: 86% ✨**
 
 </div>
 
@@ -171,21 +177,22 @@ Mayo 2026:   ███░░░░░░░░░░░░░░░░░░  ~1
 
 ### Histórico de Commits (Descendente)
 
-| Autor | Commits | Período | Contribución |
-|-------|---------|---------|---|
-| 🔵 **Deibyd Castillo** | 18 | Abr-May | UI/Design, Logros, Dashboard |
-| 🟢 **Luis Carlos Pedraza** | 15 | Abr-May | Docs, HU-13, Validaciones |
-| 🟡 **Nicolás García** | 8 | Abr-May | HU-11/12, Reportes, Filtros |
-| 🟣 **Yerlin Álvarez** | 7 | Abr-29 | HU-14/15, Contexto Académico |
-| 🔴 **Juan Camilo Triana** | 6 | Mar-Abr | Setup inicial, Auth |
-| 🟠 **Johan Beltrán** | 4 | Abr | HU-05/06, Layout, Accesibilidad |
-| ⚫ **Kevin García** | 3 | Mar-Abr | Setup, Documentación |
+| Autor                           | Commits | Período | Contribución                   |
+| ------------------------------- | ------- | -------- | ------------------------------- |
+| 🔵**Deibyd Castillo**     | 18      | Abr-May  | UI/Design, Logros, Dashboard    |
+| 🟢**Luis Carlos Pedraza** | 15      | Abr-May  | Docs, HU-13, Validaciones       |
+| 🟡**Nicolás García**    | 8       | Abr-May  | HU-11/12, Reportes, Filtros     |
+| 🟣**Yerlin Álvarez**     | 7       | Abr-29   | HU-14/15, Contexto Académico   |
+| 🔴**Juan Camilo Triana**  | 6       | Mar-Abr  | Setup inicial, Auth             |
+| 🟠**Johan Beltrán**      | 4       | Abr      | HU-05/06, Layout, Accesibilidad |
+| ⚫**Kevin García**       | 3       | Mar-Abr  | Setup, Documentación           |
 
 ---
 
 ## 🚀 Inicio Rápido
 
 ### Requisitos Previos
+
 - Node.js 16+ y npm/yarn
 - Cuenta de Supabase (gratuita en [supabase.com](https://supabase.com))
 - Git
@@ -193,34 +200,40 @@ Mayo 2026:   ███░░░░░░░░░░░░░░░░░░  ~1
 ### Instalación
 
 1. **Clonar el repositorio**
+
 ```bash
 git clone https://github.com/LuisCPedraza/FinanzasU.git
 cd FinanzasU
 ```
 
 2. **Instalar dependencias**
+
 ```bash
 npm install
 ```
 
 3. **Configurar variables de entorno**
+
 ```bash
 cp .env.example .env.local
 ```
 
 Actualizar `.env.local` con tus credenciales de Supabase:
+
 ```env
 VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
 VITE_SUPABASE_ANON_KEY=tu-anon-key
 ```
 
 4. **Inicializar base de datos**
+
 ```bash
 # Ejecutar migraciones en Supabase (SQL editor)
 # Archivos en: supabase/migrations/
 ```
 
 5. **Iniciar servidor de desarrollo**
+
 ```bash
 npm run dev
 ```
@@ -326,27 +339,39 @@ FinanzasU/
 
 ## 📈 Historias de Usuario
 
-### ✅ Implementadas (21/21)
+### ✅ Implementadas (24/28)
 
-| # | Título | Estado | Autor Principal | Fecha |
-|---|--------|--------|---|---|
-| HU-01 | Disponibilidad y coherencia de información | ✅ | Luis Pedraza | 2026-04-10 |
-| HU-02 | Sesión estable y control de acceso | ✅ | Luis Pedraza | 2026-04-10 |
-| HU-03 | Login y registro seguros | ✅ | Deibyd Castillo | 2026-04-12 |
-| HU-04 | Actualizar perfil y contraseña | ✅ | Deibyd Castillo | 2026-04-12 |
-| HU-05 | Accesibilidad en auth | ✅ | Johan Beltrán | 2026-04-13 |
-| HU-06 | Layout sidebar moderno | ✅ | Johan Beltrán | 2026-04-13 |
-| HU-07/08 | CRUD Categorías y Presupuestos | ✅ | Nicolás García | 2026-04-13 |
-| HU-09 | Sistema de Logros | ✅ | Deibyd Castillo | 2026-04-23 |
-| HU-10 | Logros en Perfil | ✅ | Deibyd Castillo | 2026-04-23 |
-| HU-11/12 | Filtros, Paginación, Exportar | ✅ | Nicolás García | 2026-04-26 |
-| HU-13 | Sistema de Notificaciones | ✅ | Luis Pedraza | 2026-04-20 |
-| HU-14 | Preferencias de Notificación | ✅ | Yerlin Álvarez | 2026-04-29 |
-| HU-15 | Contexto Académico | ✅ | Yerlin Álvarez | 2026-04-30 |
-| HU-16 | Recuperación de Contraseña | ✅ | Johan Beltrán | 2026-04-20 |
-| HU-18 | Dashboard Mejorado | ✅ | Deibyd Castillo | 2026-05-04 |
-| HU-20 | Reportes por Categoría | ✅ | Nicolás García | 2026-05-10 |
-| HU-21 | Umbral Configurable de Alertas | ✅ | Luis Pedraza | 2026-05-10 |
+| #        | Título                                       | Estado | Autor Principal  | Fecha      |
+| -------- | --------------------------------------------- | ------ | ---------------- | ---------- |
+| HU-01    | Disponibilidad y coherencia de información   | ✅     | Luis Pedraza     | 2026-04-10 |
+| HU-02    | Sesión estable y control de acceso           | ✅     | Luis Pedraza     | 2026-04-10 |
+| HU-03    | Login y registro seguros                      | ✅     | Deibyd Castillo  | 2026-04-12 |
+| HU-04    | Actualizar perfil y contraseña               | ✅     | Deibyd Castillo  | 2026-04-12 |
+| HU-05    | Accesibilidad en auth                         | ✅     | Johan Beltrán   | 2026-04-13 |
+| HU-06    | Layout sidebar moderno                        | ✅     | Johan Beltrán   | 2026-04-13 |
+| HU-07/08 | CRUD Categorías y Presupuestos               | ✅     | Nicolás García | 2026-04-13 |
+| HU-09    | Sistema de Logros                             | ✅     | Deibyd Castillo  | 2026-04-23 |
+| HU-10    | Logros en Perfil                              | ✅     | Deibyd Castillo  | 2026-04-23 |
+| HU-11/12 | Filtros, Paginación, Exportar                | ✅     | Nicolás García | 2026-04-26 |
+| HU-13    | Sistema de Notificaciones                     | ✅     | Luis Pedraza     | 2026-04-20 |
+| HU-14    | Preferencias de Notificación                 | ✅     | Yerlin Álvarez  | 2026-04-29 |
+| HU-15    | Contexto Académico                           | ✅     | Yerlin Álvarez  | 2026-04-30 |
+| HU-16    | Recuperación de Contraseña                  | ✅     | Johan Beltrán   | 2026-04-20 |
+| HU-18    | Dashboard Mejorado                            | ✅     | Deibyd Castillo  | 2026-05-04 |
+| HU-20    | Reportes por Categoría                       | ✅     | Nicolás García | 2026-05-10 |
+| HU-21    | Umbral Configurable de Alertas                | ✅     | Luis Pedraza     | 2026-05-10 |
+| HU-22    | Meta de ahorro mensual                        | ✅     | -                | -          |
+| HU-23    | Restricción de Gastos por Capital Disponible | ✅     | -                | -          |
+| HU-24    | Estabilidad del Sistema y Pruebas Unitarias   | ✅     | Luis Pedraza     | 2026-05-19 |
+
+### ⏳ Pendientes (4/28)
+
+| #     | Título                                                | Estado | Autor Principal | Fecha |
+| ----- | ------------------------------------------------------ | ------ | --------------- | ----- |
+| HU-25 | Seguridad, Políticas RLS y Privacidad de Datos        | ⏳     | -               | -     |
+| HU-26 | Documentación Técnica y Preparación para Despliegue | ⏳     | -               | -     |
+| HU-27 | Despliegue en Entorno de Producción                   | ⏳     | -               | -     |
+| HU-28 | Pruebas de QA Integral y Reporte de Bugs               | ⏳     | -               | -     |
 
 ---
 
@@ -362,7 +387,7 @@ flowchart TB
     Services["🔗 Services Supabase<br/>Wrappers JS Client"]
     Auth["🔐 Supabase Auth<br/>JWT Sessions"]
     DB["🗄️ PostgreSQL<br/>RLS Policies"]
-    
+  
     User -->|interacts| UI
     UI -->|routes| Router
     UI -->|reads/writes| Context
@@ -371,7 +396,7 @@ flowchart TB
     Services -->|calls| Auth
     Services -->|queries| DB
     Auth -->|manages| DB
-    
+  
     style UI fill:#61DAFB
     style Context fill:#764ABC
     style Services fill:#3ECF8E
@@ -380,6 +405,7 @@ flowchart TB
 ```
 
 ### Flujo de Datos
+
 1. **UI** → Componentes React con hooks personalizados
 2. **Contextos** → Estado global centralizado (Auth, Notificaciones, Logros)
 3. **Services** → Wrappers de Supabase JS Client
@@ -397,6 +423,7 @@ flowchart TB
 - 🎯 **[HU-21-sidebar-layout.md](docs/HU-06-sidebar-layout.md)** - Especificación del layout
 
 ### Más Información
+
 - Estructura de base de datos: `supabase/migrations/`
 - Políticas RLS: `supabase/policies.sql`
 - Datos de prueba: `supabase/seed.sql`
@@ -414,6 +441,7 @@ flowchart TB
 5. **Abre** un Pull Request
 
 ### Pautas de Desarrollo
+
 - Usar componentes funcionales con hooks
 - Centralizar lógica en servicios y contextos
 - Escribir tests para funciones críticas
@@ -421,6 +449,7 @@ flowchart TB
 - Documentar cambios en historias de usuario
 
 ### Ramas Principales
+
 - `main` - Versión estable en producción
 - `develop` - Rama de integración (más actualizada)
 - `feature/*` - Ramas de características
