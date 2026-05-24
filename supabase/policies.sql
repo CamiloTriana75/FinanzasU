@@ -4,6 +4,7 @@ ALTER TABLE public.categorias ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.transacciones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.presupuestos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notificaciones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.preferencias_notificacion ENABLE ROW LEVEL SECURITY;
 
 -- Perfiles: cada usuario solo ve y edita el suyo
 CREATE POLICY "perfil_select" ON public.perfiles
@@ -69,6 +70,16 @@ CREATE POLICY "notificaciones_update" ON public.notificaciones
 
 CREATE POLICY "notificaciones_delete" ON public.notificaciones
   FOR DELETE USING (auth.uid() = user_id);
+
+-- Preferencias de notificación: cada usuario solo accede a sus propias preferencias
+CREATE POLICY "preferencias_select" ON public.preferencias_notificacion
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "preferencias_insert" ON public.preferencias_notificacion
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "preferencias_update" ON public.preferencias_notificacion
+  FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- Catálogo de logros: lectura pública (todos pueden ver el catálogo)
 CREATE POLICY "catalogo_logros_select_all" ON public.catalogo_logros

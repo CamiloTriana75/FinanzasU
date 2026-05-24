@@ -506,10 +506,10 @@ Esta nota se añade como registro de revisión para HU-21; el cumplimiento parci
 > Como estudiante, quiero que mi información financiera esté estrictamente protegida y tener control sobre mis datos, para confiar plenamente en la aplicación.
 
 ### Criterios de aceptación
-- [ ] Se verifica e implementa política RLS (Row Level Security) en la tabla `preferencias_notificacion` (nadie puede leer preferencias ajenas).
-- [ ] El botón "Cerrar cuenta" en el Perfil implementa una eliminación real llamando a un endpoint seguro (o si está fuera de alcance, se oculta el botón temporalmente para no generar falsas expectativas).
-- [ ] El panel de notificaciones permite borrar notificaciones de forma individual o incluye un botón "Borrar todas las leídas".
-- [ ] Los archivos `.env` se eliminan del historial de Git por seguridad, dejando únicamente `.env.example`.
+- [x] Se verifica e implementa política RLS (Row Level Security) en la tabla `preferencias_notificacion` (nadie puede leer preferencias ajenas).
+- [x] El botón "Cerrar cuenta" en el Perfil se oculta temporalmente mientras no existe un endpoint seguro de eliminación de cuenta.
+- [x] El panel de notificaciones permite borrar notificaciones de forma individual y tiene un botón para borrar todas las leídas.
+- [x] Los archivos `.env` se eliminan del historial de Git por seguridad, dejando únicamente `.env.example`.
 
 ### Definition of Ready
 - Políticas RLS definidas en SQL.

@@ -9,7 +9,6 @@ import {
 	School,
 	BellRing,
 	Star,
-	Trash2,
 	Eye,
 	EyeOff
 } from 'lucide-react'
@@ -351,9 +350,6 @@ const [errors, setErrors] = useState({})
 		}
 	}
 
-	const handleDeleteAccount = () => {
-		toast('Accion no disponible por el momento.')
-	}
 	const handleSaveAcademic = async (e) => {
 		e.preventDefault()
 		setAcademicError('')
@@ -609,9 +605,7 @@ const [errors, setErrors] = useState({})
 
 							<div className="flex flex-col md:flex-row md:items-center gap-4 pt-2">
 								<ActionButton type="submit" variant="danger" loading={passwordLoading}>Cambiar clave</ActionButton>
-								<ActionButton type="button" variant="ghost" onClick={handleDeleteAccount}>
-									<Trash2 className="w-4 h-4" /> Cerrar cuenta
-								</ActionButton>
+
 							</div>
 						</form>
 					</div>
