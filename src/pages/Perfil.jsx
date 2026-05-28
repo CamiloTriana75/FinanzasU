@@ -527,7 +527,7 @@ const [errors, setErrors] = useState({})
 								<input
 									type="number"
 									min="2024"
-									max="2090"
+									max="2040"
 									value={metaGrado}
 									onChange={(e) => setMetaGrado(e.target.value)}
 									placeholder="Ej: 2027"

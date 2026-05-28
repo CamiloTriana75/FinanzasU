@@ -92,6 +92,7 @@ export default function Transacciones() {
     const next = { ...form, [field]: value }
     if (field === 'tipo') next.categoria_id = ''
     setForm(next)
+    // Pasa todos los campos incluida descripcion para validar BUG-02
     const nextErrors = validateTransaccionForm(next)
     setErrors(nextErrors)
   }
@@ -385,15 +386,26 @@ export default function Transacciones() {
           </div>
 
           <div>
-            <label htmlFor="tx-desc" className="block text-[10px] uppercase tracking-widest font-bold text-[#757684] mb-2">Descripcion (opcional)</label>
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="tx-desc" className="block text-[10px] uppercase tracking-widest font-bold text-[#757684]">Descripcion (opcional)</label>
+              <span className={['text-[10px] font-semibold', form.descripcion.length > 100 ? 'text-[#ba1a1a]' : 'text-[#757684]/60'].join(' ')}>
+                {form.descripcion.length}/100
+              </span>
+            </div>
             <input
               id="tx-desc"
               type="text"
+              maxLength={110}
               placeholder="Ej: Almuerzo en la universidad"
               value={form.descripcion}
               onChange={(e) => handleChange('descripcion', e.target.value)}
-              className="w-full rounded-xl border border-[#c5c5d4]/40 bg-white px-4 py-3 text-sm text-[#191c1d] placeholder:text-[#757684]/50 focus:outline-none focus:ring-4 focus:ring-[#dee0ff] focus:border-[#24389c] transition-all"
+              className={[
+                'w-full rounded-xl border bg-white px-4 py-3 text-sm text-[#191c1d] placeholder:text-[#757684]/50',
+                'focus:outline-none focus:ring-4 focus:ring-[#dee0ff] focus:border-[#24389c] transition-all',
+                errors.descripcion ? 'border-[#ba1a1a]' : 'border-[#c5c5d4]/40'
+              ].join(' ')}
             />
+            {errors.descripcion && <p className="text-xs text-[#ba1a1a] mt-1">{errors.descripcion}</p>}
           </div>
         </form>
       </Modal>
