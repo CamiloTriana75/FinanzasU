@@ -19,6 +19,10 @@ export function validateFecha(value) {
   if (!value) return 'La fecha es obligatoria'
   const date = new Date(value)
   if (isNaN(date.getTime())) return 'La fecha no es valida'
+  // BUG-03: No se permiten fechas futuras en transacciones
+  const hoy = new Date()
+  hoy.setHours(23, 59, 59, 999)
+  if (date > hoy) return 'La fecha no puede ser en el futuro'
   return null
 }
 
@@ -30,7 +34,17 @@ export function validateNombre(value, min = 2, max = 50) {
   return null
 }
 
-export function validateTransaccionForm({ tipo, monto, categoria_id, fecha }) {
+const MAX_DESCRIPCION_LENGTH = 100
+
+export function validateDescripcion(value) {
+  if (!value) return null // La descripcion es opcional
+  if (String(value).length > MAX_DESCRIPCION_LENGTH) {
+    return `La descripcion no puede superar ${MAX_DESCRIPCION_LENGTH} caracteres`
+  }
+  return null
+}
+
+export function validateTransaccionForm({ tipo, monto, categoria_id, fecha, descripcion }) {
   const errors = {}
   const tipoErr = validateRequired(tipo, 'El tipo')
   if (tipoErr) errors.tipo = tipoErr
@@ -45,7 +59,37 @@ export function validateTransaccionForm({ tipo, monto, categoria_id, fecha }) {
   const fechaErr = validateFecha(fecha)
   if (fechaErr) errors.fecha = fechaErr
 
+  // BUG-02: Validar longitud de descripcion
+  const descErr = validateDescripcion(descripcion)
+  if (descErr) errors.descripcion = descErr
+
   return errors
+}
+
+/**
+ * Valida si hay fondos suficientes para crear/actualizar una transaccion.
+ * - transacciones: lista actual de transacciones (ingresos/gastos)
+ * - params: { tipo, monto, editando } donde editando es la transaccion previa (opcional)
+ * Devuelve null si hay fondos, o string con mensaje de error si no.
+ */
+export function validateFondosSuficientes(transacciones, { tipo, monto, editando = null }) {
+  const numMonto = Number(monto || 0)
+
+  // calcular balance actual (ingresos - gastos)
+  const balanceActual = transacciones.reduce((acc, t) => {
+    return acc + (t.tipo === 'ingreso' ? Number(t.monto || 0) : -Number(t.monto || 0))
+  }, 0)
+
+  const efectoPrev = editando
+    ? (editando.tipo === 'ingreso' ? Number(editando.monto || 0) : -Number(editando.monto || 0))
+    : 0
+
+  const efectoNuevo = tipo === 'ingreso' ? numMonto : -numMonto
+
+  const balanceDespues = balanceActual - efectoPrev + efectoNuevo
+
+  if (balanceDespues < 0 && tipo === 'gasto') return 'Fondos insuficientes'
+  return null
 }
 
 export function validateCategoriaForm({ nombre, tipo }) {
@@ -67,6 +111,26 @@ export function validatePresupuestoForm({ categoria_id, monto_limite }) {
 
   const montoErr = validateMonto(monto_limite)
   if (montoErr) errors.monto_limite = montoErr
+
+  return errors
+}
+
+export function validateUmbralAlertaPct(value) {
+  if (value === null || value === undefined || value === '') {
+    return 'El umbral de alerta es obligatorio'
+  }
+
+  const num = Number(value)
+  if (Number.isNaN(num)) return 'El umbral debe ser un valor numerico'
+  if (num < 1 || num > 100) return 'El umbral debe estar entre 1 y 100'
+
+  return null
+}
+
+export function validatePresupuestoUmbralForm({ categoria_id, monto_limite, umbral_alerta_pct }) {
+  const errors = validatePresupuestoForm({ categoria_id, monto_limite })
+  const umbralErr = validateUmbralAlertaPct(umbral_alerta_pct)
+  if (umbralErr) errors.umbral_alerta_pct = umbralErr
 
   return errors
 }

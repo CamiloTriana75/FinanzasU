@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient'
+import { supabase } from './supabaseClient.js'
 
 const DEFAULT_LIMIT = 25
 
@@ -44,6 +44,28 @@ export async function marcarTodasComoLeidas(userId) {
     .update({ leida: true })
     .eq('user_id', userId)
     .eq('leida', false)
+
+  if (error) throw error
+}
+
+export async function borrarNotificacion(id, userId) {
+  const { data, error } = await supabase
+    .from('notificaciones')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function borrarNotificacionesLeidas(userId) {
+  const { error } = await supabase
+    .from('notificaciones')
+    .delete()
+    .eq('user_id', userId)
+    .eq('leida', true)
 
   if (error) throw error
 }

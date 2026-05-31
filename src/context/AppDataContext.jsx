@@ -8,8 +8,11 @@ import {
   updatePresupuesto as actualizarPresupuestoService,
   deletePresupuesto as eliminarPresupuestoService
 } from '../services/presupuestosService'
+import { validateFondosSuficientes } from '../utils/validationHelpers'
 import { useNotificationsContext } from './NotificationsContext'
 import { useLogrosContext } from './LogrosContext'
+import { normalizarUmbralAlertaPct } from '../utils/presupuestoStatus'
+import { obtenerMetaAhorro, guardarMetaAhorro } from '../services/perfilService'
 
 const AppDataContext = createContext(null)
 
@@ -33,6 +36,55 @@ function totalGastosCategoriaPeriodo(transacciones, categoriaId, mes, anio) {
     .reduce((acum, t) => acum + Number(t.monto || 0), 0)
 }
 
+function totalGastosCategoriaPeriodoAnterior(transacciones, categoriaId, mes, anio) {
+  return totalGastosCategoriaPeriodo(transacciones, categoriaId, mes, anio)
+}
+
+async function notificarPresupuestoSiCorresponde({
+  presupuesto,
+  categoriaNombre,
+  totalAntes,
+  totalDespues,
+  mes,
+  anio,
+  preferencias,
+  registrarNotificacion
+}) {
+  if (!presupuesto || preferencias?.alertas_diarias === false) return
+
+  const limite = Number(presupuesto.monto_limite || 0)
+  const umbral = normalizarUmbralAlertaPct(presupuesto.umbral_alerta_pct)
+
+  if (totalDespues > limite && totalAntes <= limite) {
+    await registrarNotificacion({
+      tipo: 'presupuesto',
+      titulo: 'Presupuesto excedido',
+      mensaje: `Tu categoria ${categoriaNombre} supero el limite del periodo ${mes}/${anio}.`,
+      moduloOrigen: 'presupuestos',
+      rutaDestino: '/presupuestos',
+      recursoTipo: 'presupuesto',
+      recursoId: String(presupuesto.id),
+      eventKey: `presupuesto-excedido-${presupuesto.id}-${anio}-${mes}`,
+      dedupeMinutes: null
+    })
+    return
+  }
+
+  if (totalDespues >= umbral && totalAntes < umbral && totalDespues < limite) {
+    await registrarNotificacion({
+      tipo: 'presupuesto',
+      titulo: 'Presupuesto cerca del limite',
+      mensaje: `Tu categoria ${categoriaNombre} alcanzo el ${Math.round(totalDespues / limite * 100)}% del periodo ${mes}/${anio}.`,
+      moduloOrigen: 'presupuestos',
+      rutaDestino: '/presupuestos',
+      recursoTipo: 'presupuesto',
+      recursoId: String(presupuesto.id),
+      eventKey: `presupuesto-umbral-${presupuesto.id}-${anio}-${mes}`,
+      dedupeMinutes: null
+    })
+  }
+}
+
 export function AppDataProvider({ children }) {
   const { usuario } = useAuthContext()
   const { registrarNotificacion, preferencias } = useNotificationsContext()
@@ -41,6 +93,7 @@ export function AppDataProvider({ children }) {
   const [categorias, setCategorias] = useState([])
   const [transacciones, setTransacciones] = useState([])
   const [presupuestos, setPresupuestos] = useState([])
+  const [metaAhorro, setMetaAhorro] = useState(0)
   const [cargandoDatos, setCargandoDatos] = useState(false)
   const [errorGlobal, setErrorGlobal] = useState('')
 
@@ -48,6 +101,7 @@ export function AppDataProvider({ children }) {
     setCategorias([])
     setTransacciones([])
     setPresupuestos([])
+    setMetaAhorro(0)
     setErrorGlobal('')
     setCargandoDatos(false)
   }, [])
@@ -62,15 +116,17 @@ export function AppDataProvider({ children }) {
     setErrorGlobal('')
 
     try {
-      const [categoriasData, transaccionesData, presupuestosData] = await Promise.all([
+      const [categoriasData, transaccionesData, presupuestosData, metaAhorroData] = await Promise.all([
         listarCategorias(usuario.id),
         listarTransacciones(usuario.id),
-        listarPresupuestos(usuario.id)
+        listarPresupuestos(usuario.id),
+        obtenerMetaAhorro(usuario.id)
       ])
 
       setCategorias(categoriasData)
       setTransacciones(transaccionesData)
       setPresupuestos(presupuestosData)
+      setMetaAhorro(metaAhorroData)
     } catch (error) {
       setErrorGlobal(error.message || 'No se pudieron cargar los datos.')
     } finally {
@@ -88,6 +144,12 @@ export function AppDataProvider({ children }) {
     }
 
     setErrorGlobal('')
+
+    // Validar fondos disponibles antes de crear (HU-23)
+    const posibleError = validateFondosSuficientes(transacciones, { tipo, monto, editando: null })
+    if (posibleError) {
+      throw new Error(posibleError)
+    }
 
     const nuevaTransaccion = await crearTransaccionService({
       user_id: usuario.id,
@@ -123,24 +185,22 @@ export function AppDataProvider({ children }) {
           && Number(p.mes) === Number(mes)
           && Number(p.anio) === Number(anio)
         )
-        
-      if (presupuesto && preferencias?.alertas_diarias !== false) {
-        const totalGasto = totalGastosCategoriaPeriodo(nextTransacciones, categoriaId, mes, anio)
-        const limite = Number(presupuesto.monto_limite || 0)
-          if (totalGasto > limite) {
-          await registrarNotificacion({
-            tipo: 'presupuesto',
-            titulo: 'Presupuesto excedido',
-            mensaje: `Tu categoria ${categoriaNombre} supero el limite del periodo ${mes}/${anio}.`,
-            moduloOrigen: 'presupuestos',
-            rutaDestino: '/presupuestos',
-            recursoTipo: 'presupuesto',
-            recursoId: String(presupuesto.id),
-            eventKey: `presupuesto-excedido-${presupuesto.id}-${anio}-${mes}`,
-            dedupeMinutes: null
+
+        if (presupuesto) {
+          const totalDespues = totalGastosCategoriaPeriodo(nextTransacciones, categoriaId, mes, anio)
+          const totalAntes = totalGastosCategoriaPeriodoAnterior(transacciones, categoriaId, mes, anio)
+
+          await notificarPresupuestoSiCorresponde({
+            presupuesto,
+            categoriaNombre,
+            totalAntes,
+            totalDespues,
+            mes,
+            anio,
+            preferencias,
+            registrarNotificacion
           })
         }
-      }
       }
     } catch (notificationError) {
       console.warn('No se pudo registrar notificacion de transaccion:', notificationError)
@@ -160,6 +220,11 @@ export function AppDataProvider({ children }) {
     if (!usuario?.id) throw new Error('Sesion invalida.')
     setErrorGlobal('')
     const anterior = transacciones.find((t) => t.id === id)
+    // Validar fondos disponibles antes de actualizar (HU-23)
+    const posibleError = validateFondosSuficientes(transacciones, { tipo: data.tipo ?? anterior.tipo, monto: data.monto ?? anterior.monto, editando: anterior })
+    if (posibleError) {
+      throw new Error(posibleError)
+    }
     const actualizada = await actualizarTransaccionService(id, usuario.id, data)
 
     const nextTransacciones = transacciones.map((t) => (t.id === id ? actualizada : t))
@@ -177,7 +242,7 @@ export function AppDataProvider({ children }) {
           && Number(p.anio) === Number(periodo.anio)
         )
 
-        if (presupuesto && preferencias?.alertas_diarias !== false) {
+        if (presupuesto) {
           const totalDespues = totalGastosCategoriaPeriodo(
             nextTransacciones,
             actualizada.categoria_id,
@@ -194,20 +259,16 @@ export function AppDataProvider({ children }) {
             )
             : 0
 
-          const limite = Number(presupuesto.monto_limite || 0)
-          if (totalDespues > limite && totalAntes <= limite) {
-            await registrarNotificacion({
-              tipo: 'presupuesto',
-              titulo: 'Presupuesto excedido',
-              mensaje: `Tu categoria ${categoriaNombre} supero el limite del periodo ${periodo.mes}/${periodo.anio}.`,
-              moduloOrigen: 'presupuestos',
-              rutaDestino: '/presupuestos',
-              recursoTipo: 'presupuesto',
-              recursoId: String(presupuesto.id),
-              eventKey: `presupuesto-excedido-${presupuesto.id}-${periodo.anio}-${periodo.mes}`,
-              dedupeMinutes: null
-            })
-          }
+          await notificarPresupuestoSiCorresponde({
+            presupuesto,
+            categoriaNombre,
+            totalAntes,
+            totalDespues,
+            mes: periodo.mes,
+            anio: periodo.anio,
+            preferencias,
+            registrarNotificacion
+          })
         }
       }
     } catch (notificationError) {
@@ -222,7 +283,7 @@ export function AppDataProvider({ children }) {
     }
 
     return actualizada
-  }, [usuario?.id, categorias, presupuestos, transacciones, registrarNotificacion, evaluarYActualizarLogros])
+  }, [usuario?.id, categorias, presupuestos, transacciones, registrarNotificacion, evaluarYActualizarLogros, preferencias])
 
   const eliminarTransaccion = useCallback(async (id) => {
     if (!usuario?.id) throw new Error('Sesion invalida.')
@@ -359,6 +420,19 @@ export function AppDataProvider({ children }) {
     }
   }, [usuario?.id, presupuestos, transacciones, categorias, evaluarYActualizarLogros])
 
+  /**
+   * Actualiza la meta de ahorro mensual del usuario.
+   * Persiste el nuevo valor en Supabase y actualiza el estado local.
+   *
+   * @param {number} nuevoMonto - El nuevo monto de la meta (>= 0)
+   */
+  const actualizarMetaAhorro = useCallback(async (nuevoMonto) => {
+    if (!usuario?.id) throw new Error('Sesion invalida.')
+    const metaGuardada = await guardarMetaAhorro(usuario.id, nuevoMonto)
+    setMetaAhorro(metaGuardada)
+    return metaGuardada
+  }, [usuario?.id])
+
   const totales = useMemo(() => {
     const totalIngresos = transacciones
       .filter((t) => t.tipo === 'ingreso')
@@ -379,6 +453,7 @@ export function AppDataProvider({ children }) {
     categorias,
     transacciones,
     presupuestos,
+    metaAhorro,
     cargandoDatos,
     errorGlobal,
     totales,
@@ -393,11 +468,13 @@ export function AppDataProvider({ children }) {
     crearPresupuesto,
     actualizarPresupuesto,
     eliminarPresupuesto,
+    actualizarMetaAhorro,
     limpiarEstado
   }), [
     categorias,
     transacciones,
     presupuestos,
+    metaAhorro,
     cargandoDatos,
     errorGlobal,
     totales,
@@ -411,6 +488,7 @@ export function AppDataProvider({ children }) {
     crearPresupuesto,
     actualizarPresupuesto,
     eliminarPresupuesto,
+    actualizarMetaAhorro,
     limpiarEstado
   ])
 

@@ -6,6 +6,8 @@ import {
   listarNotificaciones,
   marcarNotificacionLeida,
   marcarTodasComoLeidas,
+  borrarNotificacion as borrarNotificacionService,
+  borrarNotificacionesLeidas as borrarNotificacionesLeidasService,
   obtenerPreferencias,
   guardarPreferencias
 } from '../services/notificacionesService'
@@ -138,6 +140,27 @@ export function NotificationsProvider({ children }) {
     setNoLeidas(0)
   }, [usuario?.id])
 
+  const borrarNotificacionIndividual = useCallback(async (id) => {
+    if (!usuario?.id) return
+
+    const eliminada = notificaciones.find((n) => n.id === id)
+    if (!eliminada) return
+
+    await borrarNotificacionService(id, usuario.id)
+    setNotificaciones((prev) => prev.filter((n) => n.id !== id))
+
+    if (!eliminada.leida) {
+      setNoLeidas((prev) => Math.max(0, prev - 1))
+    }
+  }, [notificaciones, usuario?.id])
+
+  const borrarNotificacionesLeidas = useCallback(async () => {
+    if (!usuario?.id) return
+
+    await borrarNotificacionesLeidasService(usuario.id)
+    setNotificaciones((prev) => prev.filter((n) => !n.leida))
+  }, [usuario?.id])
+
   const value = useMemo(() => ({
     notificaciones,
     noLeidas,
@@ -147,6 +170,8 @@ export function NotificationsProvider({ children }) {
     registrarNotificacion,
     marcarLeida,
     marcarTodasLeidas,
+    borrarNotificacionIndividual,
+    borrarNotificacionesLeidas,
     limpiarNotificaciones,
     // Preferencias
     preferencias,

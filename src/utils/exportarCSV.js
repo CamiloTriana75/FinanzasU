@@ -41,11 +41,7 @@ export function exportarCSV(transacciones, categorias, nombreArchivo) {
     escapar(t.monto)
   ])
 
-  const contenido = [
-    'sep=,',          // indica a Excel el separador, funciona en cualquier locale
-    ENCABEZADOS.join(','),
-    ...filas.map((f) => f.join(','))
-  ].join('\r\n')
+  const contenido = buildCSVContent(ENCABEZADOS, filas)
 
   // BOM UTF-8 para que Excel reconozca tildes y caracteres especiales
   const BOM = '\uFEFF'
@@ -62,4 +58,16 @@ export function exportarCSV(transacciones, categorias, nombreArchivo) {
 
   // Liberar memoria
   setTimeout(() => URL.revokeObjectURL(url), 10_000)
+}
+
+/**
+ * Construye el contenido CSV (sin descargar) — útil para pruebas.
+ */
+export function buildCSVContent(encabezados, filas) {
+  const lines = [
+    'sep=,',
+    encabezados.join(','),
+    ...filas.map((f) => f.join(','))
+  ]
+  return lines.join('\r\n')
 }

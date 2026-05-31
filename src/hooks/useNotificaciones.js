@@ -10,6 +10,8 @@ export function useNotificaciones() {
     registrarNotificacion,
     marcarLeida,
     marcarTodasLeidas,
+    borrarNotificacionIndividual,
+    borrarNotificacionesLeidas,
     limpiarNotificaciones
   } = useNotificationsContext()
 
@@ -22,6 +24,8 @@ export function useNotificaciones() {
     registrarNotificacion,
     marcarLeida,
     marcarTodasLeidas,
+    borrarNotificacion: borrarNotificacionIndividual,
+    borrarNotificacionesLeidas,
     limpiarNotificaciones
   }
 }

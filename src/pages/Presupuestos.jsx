@@ -19,10 +19,12 @@ import { usePresupuestos } from '../hooks/usePresupuestos'
 import { useCategorias } from '../hooks/useCategorias'
 import { formatMoneda } from '../utils/formatMoneda'
 import { MESES } from '../utils/constants'
-import { validatePresupuestoForm, hasErrors } from '../utils/validationHelpers'
+import { DEFAULT_UMBRAL_ALERTA_PCT } from '../utils/presupuestoStatus'
+import { validatePresupuestoUmbralForm, hasErrors } from '../utils/validationHelpers'
+import MetaAhorroCard from '../components/ui/MetaAhorroCard'
 
 const HOY = new Date()
-const INITIAL_FORM = { categoria_id: '', monto_limite: '' }
+const INITIAL_FORM = { categoria_id: '', monto_limite: '', umbral_alerta_pct: String(DEFAULT_UMBRAL_ALERTA_PCT) }
 
 const cx = (...classes) => classes.filter(Boolean).join(' ')
 
@@ -211,6 +213,7 @@ export default function Presupuestos() {
   const [errors, setErrors] = useState({})
   const [saving, setSaving] = useState(false)
   const formRef = useRef(null)
+  const presupuestosRef = useRef(null)
 
   const categoriasGasto = useMemo(
     () => categorias.filter((c) => c.tipo === 'gasto'),
@@ -232,7 +235,6 @@ export default function Presupuestos() {
     [presupuestos]
   )
 
-  const porcentajeGlobal = totalLimite > 0 ? Math.min((totalGastado / totalLimite) * 100, 100) : 0
   const disponibles = Math.max(totalLimite - totalGastado, 0)
   const proyeccion = totalLimite - totalGastado
   const eficiencia = totalLimite > 0 ? Math.max(0, Math.round((1 - totalGastado / totalLimite) * 100)) : 100
@@ -273,7 +275,8 @@ export default function Presupuestos() {
     setEditando(presupuesto)
     setForm({
       categoria_id: String(presupuesto.categoria_id),
-      monto_limite: String(presupuesto.monto_limite)
+      monto_limite: String(presupuesto.monto_limite),
+      umbral_alerta_pct: String(presupuesto.umbral_alerta_pct ?? DEFAULT_UMBRAL_ALERTA_PCT)
     })
     setErrors({})
     setModalOpen(true)
@@ -288,13 +291,13 @@ export default function Presupuestos() {
   const handleChange = (field, value) => {
     const next = { ...form, [field]: value }
     setForm(next)
-    setErrors(validatePresupuestoForm(next))
+    setErrors(validatePresupuestoUmbralForm(next))
   }
 
   const handleSubmit = async (e) => {
     e?.preventDefault?.()
 
-    const nextErrors = validatePresupuestoForm(form)
+    const nextErrors = validatePresupuestoUmbralForm(form)
     setErrors(nextErrors)
     if (hasErrors(nextErrors)) return
 
@@ -302,7 +305,8 @@ export default function Presupuestos() {
     try {
       const payload = {
         categoria_id: Number(form.categoria_id),
-        monto_limite: Number(form.monto_limite)
+        monto_limite: Number(form.monto_limite),
+        umbral_alerta_pct: Number(form.umbral_alerta_pct)
       }
 
       if (editando) {
@@ -338,6 +342,10 @@ export default function Presupuestos() {
     handleSubmit()
   }
 
+  const scrollToPresupuestos = () => {
+    presupuestosRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const disableSubmit = hasErrors(errors) || saving
 
   if (loading) {
@@ -371,36 +379,16 @@ export default function Presupuestos() {
           </div>
         </div>
 
-        <div className="bg-[#83fba5] p-8 rounded-3xl flex flex-col justify-between">
-          <div>
-            <div className="flex justify-between items-start mb-4">
-              <PiggyBank className="w-9 h-9 text-[#005227] p-1.5 bg-white/45 rounded-lg" />
-              <span className="text-xs font-bold text-[#005227] bg-white/45 px-2 py-1 rounded-full">
-                {formatMoneda(proyeccion)}
-              </span>
-            </div>
-            <h4 className="text-[#005227] font-bold text-lg leading-tight">Meta: ahorro mensual</h4>
-            <p className="text-[#005227]/75 text-sm mt-1">Progreso de ahorro</p>
-          </div>
-          <div className="mt-6">
-            <div className="w-full h-2 bg-[#005227]/15 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#006d36] rounded-full transition-all duration-500"
-                style={{ width: `${Math.max(0, 100 - porcentajeGlobal)}%` }}
-              />
-            </div>
-            <div className="flex justify-between mt-2">
-              <span className="text-xs font-bold text-[#005227]">{Math.max(0, 100 - Math.round(porcentajeGlobal))}% libre</span>
-              <span className="text-xs font-medium text-[#005227]/70">{formatMoneda(totalLimite)} meta</span>
-            </div>
-          </div>
+        {/* Meta de Ahorro Mensual — reemplaza la tarjeta de ahorro estática */}
+        <div className="flex flex-col">
+          <MetaAhorroCard />
         </div>
       </section>
 
       <section>
         <div className="flex items-center justify-between mb-6 gap-3">
           <h3 className="font-headline text-2xl font-bold">Alertas activas</h3>
-          <button type="button" className="text-[#24389c] font-bold text-sm hover:underline flex items-center gap-1">
+          <button type="button" onClick={scrollToPresupuestos} className="text-[#24389c] font-bold text-sm hover:underline flex items-center gap-1">
             Configurar alertas <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -435,7 +423,7 @@ export default function Presupuestos() {
         </div>
       </section>
 
-      <section>
+      <section ref={presupuestosRef}>
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8">
           <div>
             <h3 className="font-headline text-2xl font-bold">Presupuestos por categoria</h3>
@@ -500,6 +488,15 @@ export default function Presupuestos() {
                     <div className="flex items-baseline gap-1 mb-6">
                       <span className="text-2xl font-extrabold">{formatMoneda(p.gastado || 0)}</span>
                       <span className="text-[#757684] text-sm">/ {formatMoneda(p.monto_limite)} mes</span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3 mb-4 text-xs">
+                      <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#f3f4f5] text-[#454652] font-semibold">
+                        Alerta al {Number(p.umbral_alerta_pct ?? DEFAULT_UMBRAL_ALERTA_PCT)}%
+                      </span>
+                      <span className={cx('font-semibold', textEstado)}>
+                        {p.estado === 'rojo' ? 'Excedido' : p.estado === 'amarillo' ? 'Advertencia' : 'En rango'}
+                      </span>
                     </div>
 
                     <div className="relative pt-1">
@@ -597,8 +594,21 @@ export default function Presupuestos() {
           />
           {errors.monto_limite ? <p className="text-xs text-[#ba1a1a] -mt-3 ml-1">{errors.monto_limite}</p> : null}
 
+          <UiInput
+            id="pres-umbral"
+            label="Umbral de alerta (%)"
+            type="number"
+            min={1}
+            max={100}
+            step={1}
+            placeholder="Ej. 80"
+            value={form.umbral_alerta_pct}
+            onChange={(e) => handleChange('umbral_alerta_pct', e.target.value)}
+          />
+          {errors.umbral_alerta_pct ? <p className="text-xs text-[#ba1a1a] -mt-3 ml-1">{errors.umbral_alerta_pct}</p> : null}
+
           <p className="text-xs text-[#757684] bg-[#f3f4f5] rounded-xl p-3">
-            Este presupuesto aplica para <strong>{MESES[mes - 1]} {anio}</strong>
+            Este presupuesto aplica para <strong>{MESES[mes - 1]} {anio}</strong>. La advertencia se activa al alcanzar el umbral configurado y el estado rojo aparece al superar el límite.
           </p>
         </form>
       </UiModal>

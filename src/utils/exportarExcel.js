@@ -31,6 +31,9 @@ export function exportarExcel(transacciones, categorias, nombreArchivo) {
     Monto: Number(t.monto)
   }))
 
+  // Exponer filas en helper para pruebas
+  const filasParaExport = filas
+
   // Crear hoja a partir de los objetos
   const hoja = XLSX.utils.json_to_sheet(filas)
 
@@ -56,4 +59,24 @@ export function exportarExcel(transacciones, categorias, nombreArchivo) {
   XLSX.utils.book_append_sheet(libro, hoja, 'Transacciones')
 
   XLSX.writeFile(libro, `${nombreArchivo}.xlsx`)
+  return filasParaExport
+}
+
+/**
+ * Construye las filas que se usarían en el workbook (sin escribir archivo).
+ * Exportado para permitir pruebas unitarias.
+ */
+export function buildExcelRows(transacciones, categorias) {
+  const resolverCategoria = (catId) => {
+    const cat = categorias.find((c) => c.id === catId)
+    return cat ? cat.nombre : 'Sin categoria'
+  }
+
+  return transacciones.map((t) => ({
+    Fecha: t.fecha,
+    Descripcion: t.descripcion || '',
+    Categoria: resolverCategoria(t.categoria_id),
+    Tipo: t.tipo,
+    Monto: Number(t.monto)
+  }))
 }

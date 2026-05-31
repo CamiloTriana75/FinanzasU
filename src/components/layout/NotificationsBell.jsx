@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Bell, CheckCheck, Loader2 } from 'lucide-react'
+import { Bell, CheckCheck, Loader2, Trash2 } from 'lucide-react'
 import { useNotificaciones } from '../../hooks/useNotificaciones'
 
 function formatearFecha(fecha) {
@@ -21,7 +21,9 @@ export default function NotificationsBell({ onNavigate }) {
     error,
     cargarNotificaciones,
     marcarLeida,
-    marcarTodasLeidas
+    marcarTodasLeidas,
+    borrarNotificacion,
+    borrarNotificacionesLeidas
   } = useNotificaciones()
   const [open, setOpen] = useState(false)
   const [panelPosition, setPanelPosition] = useState(null)
@@ -90,6 +92,13 @@ export default function NotificationsBell({ onNavigate }) {
     }
   }
 
+  const handleDeleteNotification = async (event, id) => {
+    event.stopPropagation()
+    await borrarNotificacion(id)
+  }
+
+  const readNotificationsCount = notificaciones.filter((n) => n.leida).length
+
   return (
     <div ref={containerRef} className="relative">
       <button
@@ -122,14 +131,24 @@ export default function NotificationsBell({ onNavigate }) {
               <p className="text-sm font-bold text-[#1f2f86]">Notificaciones</p>
               <p className="text-xs text-[#61657a]">{noLeidas} sin leer</p>
             </div>
-            <button
-              type="button"
-              onClick={marcarTodasLeidas}
-              disabled={noLeidas === 0}
-              className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[#24389c] transition-colors hover:bg-[#eef1ff] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <CheckCheck className="h-3.5 w-3.5" /> Marcar todas
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={borrarNotificacionesLeidas}
+                disabled={readNotificationsCount === 0}
+                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[#ba1a1a] transition-colors hover:bg-[#ffecec] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Borrar leídas
+              </button>
+              <button
+                type="button"
+                onClick={marcarTodasLeidas}
+                disabled={noLeidas === 0}
+                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[#24389c] transition-colors hover:bg-[#eef1ff] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <CheckCheck className="h-3.5 w-3.5" /> Marcar todas
+              </button>
+            </div>
           </div>
 
           <div className="max-h-[420px] overflow-auto p-2">
@@ -156,27 +175,38 @@ export default function NotificationsBell({ onNavigate }) {
             ) : (
               <div className="space-y-2">
                 {notificaciones.map((notificacion) => (
-                  <button
+                  <div
                     key={notificacion.id}
-                    type="button"
-                    onClick={() => handleNotificationClick(notificacion)}
                     className={[
-                      'w-full rounded-xl border px-3 py-3 text-left transition-colors',
+                      'w-full rounded-xl border px-3 py-3 transition-colors',
                       notificacion.leida
-                        ? 'border-[#eef1f8] bg-white hover:bg-[#f8faff]'
-                        : 'border-[#d9dffc] bg-[#f2f5ff] hover:bg-[#eaf0ff]'
+                        ? 'border-[#eef1f8] bg-white'
+                        : 'border-[#d9dffc] bg-[#f2f5ff]'
                     ].join(' ')}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-semibold text-[#1f2f86]">{notificacion.titulo}</p>
-                      {!notificacion.leida && <span className="mt-1 h-2 w-2 rounded-full bg-[#24389c]" />}
+                      <button
+                        type="button"
+                        onClick={() => handleNotificationClick(notificacion)}
+                        className="flex-1 text-left"
+                      >
+                        <p className="text-sm font-semibold text-[#1f2f86]">{notificacion.titulo}</p>
+                        <p className="mt-1 text-xs text-[#454652]">{notificacion.mensaje}</p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(event) => handleDeleteNotification(event, notificacion.id)}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#ba1a1a] transition-colors hover:bg-[#ffecec]"
+                        aria-label="Borrar notificación"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
-                    <p className="mt-1 text-xs text-[#454652]">{notificacion.mensaje}</p>
                     <div className="mt-2 flex items-center justify-between text-[11px] text-[#757684]">
                       <span className="uppercase tracking-wide">{notificacion.modulo_origen}</span>
                       <span>{formatearFecha(notificacion.created_at)}</span>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             )}
