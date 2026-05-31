@@ -19,6 +19,10 @@ export function validateFecha(value) {
   if (!value) return 'La fecha es obligatoria'
   const date = new Date(value)
   if (isNaN(date.getTime())) return 'La fecha no es valida'
+  // BUG-03: No se permiten fechas futuras en transacciones
+  const hoy = new Date()
+  hoy.setHours(23, 59, 59, 999)
+  if (date > hoy) return 'La fecha no puede ser en el futuro'
   return null
 }
 
@@ -30,7 +34,17 @@ export function validateNombre(value, min = 2, max = 50) {
   return null
 }
 
-export function validateTransaccionForm({ tipo, monto, categoria_id, fecha }) {
+const MAX_DESCRIPCION_LENGTH = 100
+
+export function validateDescripcion(value) {
+  if (!value) return null // La descripcion es opcional
+  if (String(value).length > MAX_DESCRIPCION_LENGTH) {
+    return `La descripcion no puede superar ${MAX_DESCRIPCION_LENGTH} caracteres`
+  }
+  return null
+}
+
+export function validateTransaccionForm({ tipo, monto, categoria_id, fecha, descripcion }) {
   const errors = {}
   const tipoErr = validateRequired(tipo, 'El tipo')
   if (tipoErr) errors.tipo = tipoErr
@@ -44,6 +58,10 @@ export function validateTransaccionForm({ tipo, monto, categoria_id, fecha }) {
 
   const fechaErr = validateFecha(fecha)
   if (fechaErr) errors.fecha = fechaErr
+
+  // BUG-02: Validar longitud de descripcion
+  const descErr = validateDescripcion(descripcion)
+  if (descErr) errors.descripcion = descErr
 
   return errors
 }
