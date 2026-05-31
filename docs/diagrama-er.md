@@ -5,7 +5,7 @@
 Este documento presenta el modelo entidad-relacion (ER) actual de la base de datos de FinanzasU,
 alineado con los scripts SQL de migracion y politicas RLS.
 
-> Nota: este ER refleja el estado actual de la base de datos después de las migraciones 001 a 005.
+> Nota: este ER refleja el estado actual de la base de datos después de las migraciones 001 a 006 (versión final pre-despliegue).
 
 ## Diagrama entidad-relacion
 
@@ -20,6 +20,10 @@ erDiagram
         text nombre
         text email
         text avatar_url
+        text semestre_actual
+        int meta_grado
+        text estado_academico
+        numeric meta_ahorro_mensual
         timestamptz created_at
     }
 
@@ -52,6 +56,7 @@ erDiagram
         numeric monto_limite
         int mes
         int anio
+        int umbral_alerta_pct
         timestamptz created_at
     }
 
@@ -133,6 +138,9 @@ erDiagram
   - `transacciones.monto > 0`
   - `presupuestos.monto_limite > 0`
   - `presupuestos.mes BETWEEN 1 AND 12`
+  - `presupuestos.umbral_alerta_pct BETWEEN 1 AND 100`
+  - `perfiles.estado_academico IN ('Activo', 'Pausado', 'Egresado')`
+  - `perfiles.meta_ahorro_mensual >= 0`
 - Notificaciones sin duplicados por evento:
   - `event_key` se usa para evitar repeticiones en ventanas de tiempo definidas
 
@@ -175,5 +183,8 @@ Este diagrama se deriva de:
 - `supabase/migrations/001_initial_schema.sql`
 - `supabase/migrations/002_notifications.sql`
 - `supabase/migrations/003_logros.sql`
+- `supabase/migrations/004_budget_alert_threshold.sql`
 - `supabase/migrations/004_notifications_preferences.sql`
+- `supabase/migrations/005_academic_context.sql`
+- `supabase/migrations/006_meta_ahorro.sql`
 - `supabase/policies.sql`

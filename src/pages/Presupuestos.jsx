@@ -235,7 +235,6 @@ export default function Presupuestos() {
     [presupuestos]
   )
 
-  const porcentajeGlobal = totalLimite > 0 ? Math.min((totalGastado / totalLimite) * 100, 100) : 0
   const disponibles = Math.max(totalLimite - totalGastado, 0)
   const proyeccion = totalLimite - totalGastado
   const eficiencia = totalLimite > 0 ? Math.max(0, Math.round((1 - totalGastado / totalLimite) * 100)) : 100

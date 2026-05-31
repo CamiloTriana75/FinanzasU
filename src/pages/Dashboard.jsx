@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { useAuth } from '../hooks/useAuth'
 import { useInitialData } from '../hooks/useInitialData'
 import { useAppDataContext } from '../context/AppDataContext'
 import { Link } from 'react-router-dom'
@@ -77,7 +76,6 @@ function getCategoryIcon(nombre) {
 
 // ─── Component ───────────────────────────────────────────────────
 export default function Dashboard() {
-  const { usuario } = useAuth()
   const { transacciones, categorias, presupuestos, cargandoDatos, errorGlobal } = useInitialData()
   const { totales } = useAppDataContext()
 
