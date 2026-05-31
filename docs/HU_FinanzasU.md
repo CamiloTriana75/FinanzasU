@@ -522,10 +522,10 @@ Esta nota se añade como registro de revisión para HU-21; el cumplimiento parci
 > Como equipo de desarrollo, queremos que la documentación del proyecto refleje exactamente la base de datos final, para que quede listo para el despliegue a producción y la calificación del proyecto.
 
 ### Criterios de aceptación
-- [ ] Se actualiza el archivo `docs/diagrama-er.md` para incluir las tablas nuevas: `notificaciones`, `preferencias_notificacion`, `catalogo_logros` y `progreso_logros`.
-- [ ] Se actualiza el `README.md` con las estadísticas finales reales (porcentaje de completitud, cobertura de test).
-- [ ] El proyecto compila correctamente para producción (`npm run build`) sin errores de ESLint.
-- [ ] Se documentan los pasos de despliegue en Vercel, Netlify o la plataforma elegida en el README.
+- [x] Se actualiza el archivo `docs/diagrama-er.md` para incluir las tablas nuevas: `notificaciones`, `preferencias_notificacion`, `catalogo_logros` y `progreso_logros`.
+- [x] Se actualiza el `README.md` con las estadísticas finales reales (porcentaje de completitud, cobertura de test).
+- [x] El proyecto compila correctamente para producción (`npm run build`) sin errores de ESLint.
+- [x] Se documentan los pasos de despliegue en Vercel, Netlify o la plataforma elegida en el README.
 
 ### Definition of Ready
 - Código congelado y sin errores de linting.

@@ -4,9 +4,11 @@
 
 ![FinanzasU Banner](https://img.shields.io/badge/FinanzasU-Gestión%20de%20Finanzas%20para%20Estudiantes-blue?style=for-the-badge&logo=money&logoColor=white)
 
-![Version](https://img.shields.io/badge/version-2.1.0-brightgreen?style=flat-square)
-![Status](https://img.shields.io/badge/status-Active%20Development-success?style=flat-square)
+![Version](https://img.shields.io/badge/version-3.0.0-brightgreen?style=flat-square)
+![Status](https://img.shields.io/badge/status-Release%20Candidate-success?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+![Build](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-16%2F16-brightgreen?style=flat-square)
 
 **Una plataforma integral para que estudiantes universitarios gestionen sus finanzas personales de forma inteligente y controlada.**
 
@@ -29,6 +31,7 @@
 - [📈 Historias de Usuario](#historias-de-usuario)
 - [🔐 Arquitectura](#arquitectura)
 - [📖 Documentación](#documentación)
+- [🚢 Despliegue en Producción](#-despliegue-en-producción)
 - [🤝 Contribuir](#contribuir)
 - [📝 Licencia](#licencia)
 
@@ -111,16 +114,21 @@ En el contexto académico, muchos estudiantes carecen de herramientas especializ
 
 ## 📊 Estadísticas
 
-### Métricas del Proyecto
+### Métricas del Proyecto (corte 2026-05-31)
 
 ```
-📅 Período de Desarrollo: Marzo 2026 - Mayo 2026
-💾 Commits Totales: 92+
-👥 Contribuidores Activos: 7
-📝 Historias de Usuario: 28 (HU-01 a HU-28)
-✅ HUs Completadas: 24/28 (85.7%)
-🧪 Tests ejecutados: 13
+📅 Período de Desarrollo:    Marzo 2026 - Mayo 2026
+💾 Commits Totales:          145
+👥 Contribuidores Activos:   7
+📝 Historias de Usuario:     28 (HU-01 a HU-28)
+✅ HUs Completadas:          26/28 (92.8%)
+📋 Criterios de Aceptación:  141/150 (94.0%)
+🧪 Tests Automatizados:      16/16 (100% pass) en 8 suites
+🛠️ Build de producción:      OK (vite build sin errores)
+🔍 Lint:                     0 errores ESLint
 ```
+
+> Las únicas HUs pendientes son **HU-27 (Despliegue en Producción)** y **HU-28 (Pruebas de QA Integral)**, ambas dependientes de la salida a producción.
 
 ### 📈 Progreso del Proyecto
 
@@ -129,12 +137,13 @@ En el contexto académico, muchos estudiantes carecen de herramientas especializ
 #### Avance General
 
 ```
-Historias de Usuario     █████████████████░░░░  86% (24/28)
-Características Core     ████████████████████ 100% (10/10)
-Sistema de Notificaciones ████████████████████ 100% (3/3)
-Reportes & Exportación   ████████████████████ 100% (2/2)
-Documentación            ████████████████████ 100% (7/7)
-Testing & QA             ████████████████░░░░░  81% (13 pruebas)
+Historias de Usuario       ███████████████████░  93% (26/28)
+Criterios de Aceptación    ███████████████████░  94% (141/150)
+Características Core       ████████████████████ 100% (10/10)
+Sistema de Notificaciones  ████████████████████ 100% (3/3)
+Reportes & Exportación     ████████████████████ 100% (2/2)
+Documentación              ████████████████████ 100% (8/8)
+Testing & QA               ████████████████░░░░  80% (16 tests / 8 suites)
 ```
 
 #### Estado por Componente
@@ -159,33 +168,35 @@ Testing & QA             ████████████████░░�
 🎯 Gamificación            ████████████████████ 100%
 🔔 Notificaciones          ████████████████████ 100%
 📱 Responsividad UI        ███████████████░░░░░  75%
-🧪 Cobertura de Tests      ████████████████░░░░░  81%
-📚 Documentación            ████████████████████ 100%
+🧪 Cobertura de Tests      ████████████████░░░░  80%
+📚 Documentación           ████████████████████ 100%
 ```
 
-**Resumen de Avance Global: 86% ✨**
+**Resumen de Avance Global: 93% ✨**
 
 </div>
 
 ### Distribución de Commits por Mes
 
 ```
-Marzo 2026:  ████░░░░░░░░░░░░░░░░  ~8 commits   (9%)
-Abril 2026:  ██████████████░░░░░░░ ~70 commits  (79%)
-Mayo 2026:   ███░░░░░░░░░░░░░░░░░░  ~11 commits (12%)
+Marzo 2026:  ███░░░░░░░░░░░░░░░░░  ~12 commits  ( 8%)
+Abril 2026:  ██████████████░░░░░░  ~92 commits  (63%)
+Mayo 2026:   ██████░░░░░░░░░░░░░░  ~41 commits  (28%)
 ```
 
-### Histórico de Commits (Descendente)
+### Histórico de Commits (Descendente) — `git shortlog -sn`
 
-| Autor                           | Commits | Período | Contribución                   |
-| ------------------------------- | ------- | -------- | ------------------------------- |
-| 🔵**Deibyd Castillo**     | 18      | Abr-May  | UI/Design, Logros, Dashboard    |
-| 🟢**Luis Carlos Pedraza** | 15      | Abr-May  | Docs, HU-13, Validaciones       |
-| 🟡**Nicolás García**    | 8       | Abr-May  | HU-11/12, Reportes, Filtros     |
-| 🟣**Yerlin Álvarez**     | 7       | Abr-29   | HU-14/15, Contexto Académico   |
-| 🔴**Juan Camilo Triana**  | 6       | Mar-Abr  | Setup inicial, Auth             |
-| 🟠**Johan Beltrán**      | 4       | Abr      | HU-05/06, Layout, Accesibilidad |
-| ⚫**Kevin García**       | 3       | Mar-Abr  | Setup, Documentación           |
+| Autor                           | Commits | Período  | Contribución                       |
+| ------------------------------- | ------- | -------- | ----------------------------------- |
+| 🟢 **Luis Carlos Pedraza**      | 49      | Mar-May  | Docs, HU-13, Validaciones, RLS      |
+| 🔵 **Deibyd Castillo**          | 36      | Abr-May  | UI/Design, Logros, Dashboard, Metas |
+| 🟡 **Nicolás García**          | 16      | Abr-May  | HU-11/12, Reportes, Filtros         |
+| 🟣 **Yerlin Álvarez**          | 12      | Abr-May  | HU-14/15, Contexto Académico       |
+| 🟠 **Johan Beltrán**           | 10      | Abr-May  | HU-05/06, Layout, Accesibilidad     |
+| ⚫ **Kevin García**            |  9      | Mar-Abr  | Setup, Documentación               |
+| 🔴 **Juan Camilo Triana**       |  8      | Mar-Abr  | Setup inicial, Auth                 |
+
+> Total: **145 commits** sobre `main` + `develop` al 31/05/2026.
 
 ---
 
@@ -339,39 +350,41 @@ FinanzasU/
 
 ## 📈 Historias de Usuario
 
-### ✅ Implementadas (24/28)
+### ✅ Implementadas (26/28)
 
-| #        | Título                                       | Estado | Autor Principal  | Fecha      |
-| -------- | --------------------------------------------- | ------ | ---------------- | ---------- |
-| HU-01    | Disponibilidad y coherencia de información   | ✅     | Luis Pedraza     | 2026-04-10 |
-| HU-02    | Sesión estable y control de acceso           | ✅     | Luis Pedraza     | 2026-04-10 |
-| HU-03    | Login y registro seguros                      | ✅     | Deibyd Castillo  | 2026-04-12 |
-| HU-04    | Actualizar perfil y contraseña               | ✅     | Deibyd Castillo  | 2026-04-12 |
-| HU-05    | Accesibilidad en auth                         | ✅     | Johan Beltrán   | 2026-04-13 |
-| HU-06    | Layout sidebar moderno                        | ✅     | Johan Beltrán   | 2026-04-13 |
-| HU-07/08 | CRUD Categorías y Presupuestos               | ✅     | Nicolás García | 2026-04-13 |
-| HU-09    | Sistema de Logros                             | ✅     | Deibyd Castillo  | 2026-04-23 |
-| HU-10    | Logros en Perfil                              | ✅     | Deibyd Castillo  | 2026-04-23 |
-| HU-11/12 | Filtros, Paginación, Exportar                | ✅     | Nicolás García | 2026-04-26 |
-| HU-13    | Sistema de Notificaciones                     | ✅     | Luis Pedraza     | 2026-04-20 |
-| HU-14    | Preferencias de Notificación                 | ✅     | Yerlin Álvarez  | 2026-04-29 |
-| HU-15    | Contexto Académico                           | ✅     | Yerlin Álvarez  | 2026-04-30 |
-| HU-16    | Recuperación de Contraseña                  | ✅     | Johan Beltrán   | 2026-04-20 |
-| HU-18    | Dashboard Mejorado                            | ✅     | Deibyd Castillo  | 2026-05-04 |
-| HU-20    | Reportes por Categoría                       | ✅     | Nicolás García | 2026-05-10 |
-| HU-21    | Umbral Configurable de Alertas                | ✅     | Luis Pedraza     | 2026-05-10 |
-| HU-22    | Meta de ahorro mensual                        | ✅     | -                | -          |
-| HU-23    | Restricción de Gastos por Capital Disponible | ✅     | -                | -          |
-| HU-24    | Estabilidad del Sistema y Pruebas Unitarias   | ✅     | Luis Pedraza     | 2026-05-19 |
+| #        | Título                                              | Estado | Autor Principal   | Fecha      |
+| -------- | ---------------------------------------------------- | ------ | ----------------- | ---------- |
+| HU-01    | Disponibilidad y coherencia de información          | ✅     | Luis Pedraza      | 2026-04-10 |
+| HU-02    | Sesión estable y control de acceso                  | ✅     | Luis Pedraza      | 2026-04-10 |
+| HU-03    | Login y registro seguros                             | ✅     | Deibyd Castillo   | 2026-04-12 |
+| HU-04    | Actualizar perfil y contraseña                      | ✅     | Deibyd Castillo   | 2026-04-12 |
+| HU-05    | Accesibilidad en auth                                | ✅     | Johan Beltrán    | 2026-04-13 |
+| HU-06    | Layout sidebar moderno                               | ✅     | Johan Beltrán    | 2026-04-13 |
+| HU-07/08 | CRUD Categorías y Presupuestos                      | ✅     | Nicolás García  | 2026-04-13 |
+| HU-09    | Sistema de Logros                                    | ✅     | Deibyd Castillo   | 2026-04-23 |
+| HU-10    | Logros en Perfil                                     | ✅     | Deibyd Castillo   | 2026-04-23 |
+| HU-11/12 | Filtros, Paginación, Exportar                       | ✅     | Nicolás García  | 2026-04-26 |
+| HU-13    | Sistema de Notificaciones                            | ✅     | Luis Pedraza      | 2026-04-20 |
+| HU-14    | Preferencias de Notificación                        | ✅     | Yerlin Álvarez   | 2026-04-29 |
+| HU-15    | Contexto Académico                                  | ✅     | Yerlin Álvarez   | 2026-04-30 |
+| HU-16    | Recuperación de Contraseña                         | ✅     | Johan Beltrán    | 2026-04-20 |
+| HU-17    | Templates de correo (verificación / recuperación)  | ✅     | Luis Pedraza      | 2026-04-22 |
+| HU-18    | Dashboard Mejorado                                   | ✅     | Deibyd Castillo   | 2026-05-04 |
+| HU-19    | Depósito desde el dashboard                         | ✅     | Deibyd Castillo   | 2026-05-12 |
+| HU-20    | Reportes por Categoría                              | ✅     | Nicolás García  | 2026-05-10 |
+| HU-21    | Umbral Configurable de Alertas                       | ✅     | Luis Pedraza      | 2026-05-10 |
+| HU-22    | Meta de ahorro mensual                               | ✅     | Camilo Triana     | 2026-05-26 |
+| HU-23    | Restricción de Gastos por Capital Disponible        | ✅     | Deibyd Castillo   | 2026-05-19 |
+| HU-24    | Estabilidad del Sistema y Pruebas Unitarias          | ✅     | Luis Pedraza      | 2026-05-19 |
+| HU-25    | Seguridad, Políticas RLS y Privacidad de Datos      | ✅     | Luis Pedraza      | 2026-05-20 |
+| HU-26    | Documentación Técnica y Preparación para Despliegue | ✅     | Deibyd Castillo   | 2026-05-31 |
 
-### ⏳ Pendientes (4/28)
+### ⏳ Pendientes (2/28)
 
-| #     | Título                                                | Estado | Autor Principal | Fecha |
-| ----- | ------------------------------------------------------ | ------ | --------------- | ----- |
-| HU-25 | Seguridad, Políticas RLS y Privacidad de Datos        | ⏳     | -               | -     |
-| HU-26 | Documentación Técnica y Preparación para Despliegue | ⏳     | -               | -     |
-| HU-27 | Despliegue en Entorno de Producción                   | ⏳     | -               | -     |
-| HU-28 | Pruebas de QA Integral y Reporte de Bugs               | ⏳     | -               | -     |
+| #     | Título                                    | Estado | Bloqueante                |
+| ----- | ------------------------------------------ | ------ | ------------------------- |
+| HU-27 | Despliegue en Entorno de Producción       | ⏳     | Requiere ejecutar HU-26   |
+| HU-28 | Pruebas de QA Integral y Reporte de Bugs   | ⏳     | Requiere despliegue HU-27 |
 
 ---
 
@@ -427,6 +440,69 @@ flowchart TB
 - Estructura de base de datos: `supabase/migrations/`
 - Políticas RLS: `supabase/policies.sql`
 - Datos de prueba: `supabase/seed.sql`
+
+---
+
+## 🚢 Despliegue en Producción
+
+FinanzasU está preparado para desplegarse como una **SPA estática** servida por cualquier CDN (Vercel, Netlify, Cloudflare Pages…). El backend vive 100% en **Supabase** (Auth + PostgreSQL + RLS), así que no se requiere servidor propio.
+
+### 0. Prerrequisitos (DoR HU-26)
+
+- Código en `main` (o en la rama que apunte el deploy) **sin errores de ESLint** (`npm run lint`).
+- `npm run build` genera la carpeta `dist/` correctamente.
+- Proyecto Supabase de producción creado con todas las migraciones aplicadas (`supabase/migrations/001…006`) y `supabase/policies.sql` ejecutado.
+- Templates de correo de Supabase (verificación + recovery) configurados con la URL pública final — ver HU-17.
+
+### 1. Variables de entorno requeridas
+
+| Variable | Descripción | Ejemplo |
+|---|---|---|
+| `VITE_SUPABASE_URL` | URL pública del proyecto Supabase de **producción** | `https://abcd1234.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | Anon key pública del proyecto (NUNCA service_role) | `eyJhbGciOi...` |
+
+> ⚠️ Ambas variables **deben** llevar el prefijo `VITE_` para que Vite las inyecte en el bundle del cliente. No publiques nunca la `service_role` key.
+
+### 2. Despliegue en Vercel (opción recomendada)
+
+1. En [vercel.com](https://vercel.com) → **Add New… → Project** e importa el repo de GitHub.
+2. Framework Preset: **Vite** (autodetectado).
+3. Build & Output:
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+   - **Install Command:** `npm install`
+4. En **Settings → Environment Variables**, agrega `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para los entornos *Production*, *Preview* y *Development*.
+5. **Deploy**. Vercel asigna automáticamente un dominio `https://*.vercel.app` con SSL.
+6. Para rutas SPA con React Router, crea (si no existe) un `vercel.json` en la raíz:
+   ```json
+   {
+     "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+   }
+   ```
+7. En Supabase → **Authentication → URL Configuration**, registra el dominio público como **Site URL** y agrégalo a **Redirect URLs** para que funcionen el login, el callback de OAuth y los enlaces de recuperación de contraseña.
+
+### 3. Despliegue en Netlify (alternativa)
+
+1. En [app.netlify.com](https://app.netlify.com) → **Add new site → Import an existing project** y conecta GitHub.
+2. Build settings:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+3. En **Site settings → Environment variables**, define `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+4. Agrega un `public/_redirects` (o `netlify.toml`) con la regla SPA:
+   ```
+   /*    /index.html   200
+   ```
+5. **Deploy site**. Netlify provee dominio `https://*.netlify.app` con SSL incluido.
+6. Repite el paso de Supabase: actualizar **Site URL** y **Redirect URLs** con el dominio asignado.
+
+### 4. Checklist post-despliegue (entrega a HU-27 / HU-28)
+
+- [ ] La URL pública carga el dashboard tras login.
+- [ ] Registro + verificación por correo funcionan con el dominio nuevo.
+- [ ] Reset de contraseña redirige correctamente.
+- [ ] La consola del navegador no muestra errores críticos en las rutas principales.
+- [ ] Las migraciones de Supabase de producción están alineadas con `supabase/migrations/`.
+- [ ] Tests verdes en local (`npm test`) y lint limpio (`npm run lint`).
 
 ---
 

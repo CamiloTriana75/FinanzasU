@@ -42,12 +42,13 @@ export default function BotonExportarCSV({
 
   const disabled = transaccionesFiltradas.length === 0
 
-  const OpcionFila = ({ formato, scope, icono: Icono, etiquetaFormato }) => {
+  const renderOpcion = ({ formato, scope, icono: Icono, etiquetaFormato }) => {
     const datos = scope === 'pagina' ? transaccionesPaginadas : transaccionesFiltradas
     const count = datos.length
     const etiquetaScope = scope === 'pagina' ? 'Página actual' : 'Todos los resultados'
     return (
       <button
+        key={`${formato}-${scope}`}
         onClick={() => handleExportar(formato, scope)}
         disabled={count === 0}
         className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#f3f4f5] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
@@ -90,8 +91,8 @@ export default function BotonExportarCSV({
               Excel (.xlsx)
             </p>
           </div>
-          <OpcionFila formato="xlsx" scope="pagina"  icono={FileSpreadsheet} etiquetaFormato="página actual" />
-          <OpcionFila formato="xlsx" scope="todos"   icono={FileSpreadsheet} etiquetaFormato="todos los resultados" />
+          {renderOpcion({ formato: 'xlsx', scope: 'pagina', icono: FileSpreadsheet, etiquetaFormato: 'página actual' })}
+          {renderOpcion({ formato: 'xlsx', scope: 'todos', icono: FileSpreadsheet, etiquetaFormato: 'todos los resultados' })}
 
           {/* Sección CSV */}
           <div className="px-4 pt-3 pb-1 border-t border-[#c5c5d4]/20 mt-1">
@@ -99,8 +100,8 @@ export default function BotonExportarCSV({
               CSV — compatible con Excel
             </p>
           </div>
-          <OpcionFila formato="csv" scope="pagina" icono={FileText} etiquetaFormato="página actual" />
-          <OpcionFila formato="csv" scope="todos"  icono={FileText} etiquetaFormato="todos los resultados" />
+          {renderOpcion({ formato: 'csv', scope: 'pagina', icono: FileText, etiquetaFormato: 'página actual' })}
+          {renderOpcion({ formato: 'csv', scope: 'todos', icono: FileText, etiquetaFormato: 'todos los resultados' })}
 
           <div className="px-4 py-2 border-t border-[#c5c5d4]/20 mt-1">
             <p className="text-[10px] text-[#757684]">
