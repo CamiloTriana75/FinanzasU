@@ -104,12 +104,14 @@ export default function ResetPassword() {
       }
     })
 
-    // 4. Timeout: si en 5s no se establece la sesion, enlace invalido
+    // 4. Timeout: si en 15s no se establece la sesion, enlace invalido.
+    //    El SDK de Supabase puede tardar varios segundos en procesar el hash
+    //    en conexiones lentas; un timeout corto provocaba falsos negativos.
     timeoutRef.current = setTimeout(() => {
       setEnlaceInvalido(true)
       setServerError('El enlace de recuperación es inválido o ha expirado.')
       setVerificandoEnlace(false)
-    }, 5000)
+    }, 15000)
 
     return () => {
       subscription.unsubscribe()
