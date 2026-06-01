@@ -25,7 +25,8 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts'
-import * as XLSX from 'xlsx'
+// xlsx se carga dinámicamente dentro de exportarReporteExcel para no
+// arrastrar ~300KB al bundle inicial.
 import { useCategorias } from '../hooks/useCategorias'
 import { useTransacciones } from '../hooks/useTransacciones'
 import { validateCategoriaForm, hasErrors } from '../utils/validationHelpers'
@@ -461,7 +462,9 @@ export default function Categorias() {
     URL.revokeObjectURL(url)
   }
 
-  const exportarReporteExcel = () => {
+  const exportarReporteExcel = async () => {
+    const XLSX = await import('xlsx')
+
     const filas = reporteData.items.map((item) => ({
       'Categoría': item.cat?.nombre || 'Sin categoría',
       'Tipo': item.cat?.tipo === 'gasto' ? 'Gasto' : 'Ingreso',

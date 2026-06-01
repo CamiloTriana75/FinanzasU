@@ -1,4 +1,10 @@
-import * as XLSX from 'xlsx'
+// `xlsx` es pesado (~300KB). Se carga bajo demanda solo cuando el usuario
+// pide exportar, manteniéndolo fuera del bundle inicial.
+let XLSXPromise = null
+function cargarXLSX() {
+  if (!XLSXPromise) XLSXPromise = import('xlsx')
+  return XLSXPromise
+}
 
 /**
  * Genera y descarga un archivo .xlsx con las transacciones recibidas.
@@ -16,7 +22,9 @@ import * as XLSX from 'xlsx'
  * @param {Array}  categorias     Array de categorías para resolver nombres
  * @param {string} nombreArchivo  Nombre del archivo sin extensión
  */
-export function exportarExcel(transacciones, categorias, nombreArchivo) {
+export async function exportarExcel(transacciones, categorias, nombreArchivo) {
+  const XLSX = await cargarXLSX()
+
   const resolverCategoria = (catId) => {
     const cat = categorias.find((c) => c.id === catId)
     return cat ? cat.nombre : 'Sin categoria'
@@ -30,9 +38,6 @@ export function exportarExcel(transacciones, categorias, nombreArchivo) {
     Tipo: t.tipo,
     Monto: Number(t.monto)
   }))
-
-  // Exponer filas en helper para pruebas
-  const filasParaExport = filas
 
   // Crear hoja a partir de los objetos
   const hoja = XLSX.utils.json_to_sheet(filas)
@@ -59,7 +64,7 @@ export function exportarExcel(transacciones, categorias, nombreArchivo) {
   XLSX.utils.book_append_sheet(libro, hoja, 'Transacciones')
 
   XLSX.writeFile(libro, `${nombreArchivo}.xlsx`)
-  return filasParaExport
+  return filas
 }
 
 /**
