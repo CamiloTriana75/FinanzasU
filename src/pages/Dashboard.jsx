@@ -180,15 +180,16 @@ export default function Dashboard() {
       })
   }, [transacciones, categorias])
 
-  // General budget summary (all budgets for current month)
+  // General budget summary (only budgets for current month — mezclar periodos
+  // confunde el "uso global" mostrando datos antiguos como si fueran de hoy).
   const resumenPresupuestos = useMemo(() => {
     if (!presupuestos.length) return null
 
-    const presupuestosMes = presupuestos.filter(
+    const lista = presupuestos.filter(
       (p) => Number(p.mes) === mesActual.mes && Number(p.anio) === mesActual.anio
     )
-    // If no budgets for current month, use all budgets
-    const lista = presupuestosMes.length > 0 ? presupuestosMes : presupuestos
+
+    if (lista.length === 0) return null
 
     let totalLimite = 0
     let totalGastado = 0
