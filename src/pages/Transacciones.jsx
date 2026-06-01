@@ -16,7 +16,7 @@ import FiltrosTransacciones from '../components/ui/FiltrosTransacciones'
 import Paginacion from '../components/ui/Paginacion'
 import BotonExportarCSV from '../components/ui/BotonExportarCSV'
 import { formatMoneda } from '../utils/formatMoneda'
-import { validateTransaccionForm, hasErrors, validateFondosSuficientes } from '../utils/validationHelpers'
+import { validateTransaccionForm, hasErrors } from '../utils/validationHelpers'
 
 const INITIAL_FORM = {
   tipo: 'gasto',
@@ -103,13 +103,6 @@ export default function Transacciones() {
     setErrors(nextErrors)
     if (hasErrors(nextErrors)) return
 
-    // Validacion de fondos antes de enviar (HU-23) — usa transacciones actuales y editando si aplica
-    const fondoErr = validateFondosSuficientes(transacciones, { tipo: form.tipo, monto: Number(form.monto), editando })
-    if (fondoErr) {
-      setErrors((p) => ({ ...p, monto: fondoErr }))
-      return
-    }
-
     setSaving(true)
     try {
       const payload = {
@@ -132,7 +125,14 @@ export default function Transacciones() {
       }
       closeModal()
     } catch (err) {
-      toast.error(err?.message || 'Error al guardar transaccion')
+      const mensaje = err?.message || 'Error al guardar transaccion'
+      // Errores de validación de fondos se muestran inline en el campo monto
+      // para coincidir con el patrón del resto de errores de validación.
+      if (mensaje.toLowerCase().includes('fondos insuficientes')) {
+        setErrors((p) => ({ ...p, monto: mensaje }))
+      } else {
+        toast.error(mensaje)
+      }
     } finally {
       setSaving(false)
     }

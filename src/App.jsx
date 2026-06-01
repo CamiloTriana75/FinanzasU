@@ -11,7 +11,17 @@ import Presupuestos from './pages/Presupuestos'
 import Categorias from './pages/Categorias'
 import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/layout/ProtectedRoute'
+import { useAuth } from './hooks/useAuth'
 import './auth-theme.css'
+
+// Catch-all: si la URL no coincide con nada, mandamos al dashboard cuando hay
+// sesión activa y a login cuando no la hay. Antes redirigía siempre a /login,
+// expulsando a usuarios autenticados que tipeaban mal una URL.
+function NotFoundRedirect() {
+  const { usuario, cargando } = useAuth()
+  if (cargando) return null
+  return <Navigate to={usuario ? '/dashboard' : '/login'} replace />
+}
 
 export default function App() {
   return (
@@ -57,7 +67,7 @@ export default function App() {
               </Layout>
             </ProtectedRoute>
           } />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<NotFoundRedirect />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" />

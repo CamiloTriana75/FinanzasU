@@ -54,12 +54,23 @@ test('validateTransaccionForm detecta descripcion demasiado larga', () => {
 
 test('validateFondosSuficientes bloquea gasto que excede balance', () => {
   const transacciones = [
-    { tipo: 'ingreso', monto: 1000 },
-    { tipo: 'gasto', monto: 200 }
+    { tipo: 'ingreso', monto: 1000, fecha: '2026-01-15' },
+    { tipo: 'gasto', monto: 200, fecha: '2026-01-20' }
   ]
-  // balance = 800; intento gasto 900 -> insuficiente
-  const err = validateFondosSuficientes(transacciones, { tipo: 'gasto', monto: 900 })
-  assert.equal(err, 'Fondos insuficientes')
-  // gasto 700 ok
-  assert.equal(validateFondosSuficientes(transacciones, { tipo: 'gasto', monto: 700 }), null)
+  // Balance hasta 2026-02-01 = 1000 - 200 = 800; intento gasto 900 -> insuficiente
+  const err = validateFondosSuficientes(transacciones, {
+    tipo: 'gasto',
+    monto: 900,
+    fecha: '2026-02-01'
+  })
+  assert.equal(err, 'Fondos insuficientes a la fecha del gasto')
+  // Gasto 700 a la misma fecha → permitido
+  assert.equal(
+    validateFondosSuficientes(transacciones, {
+      tipo: 'gasto',
+      monto: 700,
+      fecha: '2026-02-01'
+    }),
+    null
+  )
 })

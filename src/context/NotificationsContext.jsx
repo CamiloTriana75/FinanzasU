@@ -188,6 +188,8 @@ export function NotificationsProvider({ children }) {
     registrarNotificacion,
     marcarLeida,
     marcarTodasLeidas,
+    borrarNotificacionIndividual,
+    borrarNotificacionesLeidas,
     limpiarNotificaciones,
     preferencias,
     cargandoPreferencias,

@@ -1,7 +1,17 @@
 import { supabase } from './supabaseClient.js'
 import { calcularEstadoPresupuesto } from '../utils/presupuestoStatus'
 
-// ✅ FIX: Helper extraído para reutilizar en getPresupuestos y updatePresupuesto
+// Devuelve "YYYY-MM-DD" del último día del mes en hora local (evita corrimiento UTC).
+function rangoMesLocal(anio, mes) {
+  const ultimoDia = new Date(anio, mes, 0).getDate()
+  const mm = String(mes).padStart(2, '0')
+  const dd = String(ultimoDia).padStart(2, '0')
+  return {
+    inicio: `${anio}-${mm}-01`,
+    fin: `${anio}-${mm}-${dd}`
+  }
+}
+
 function enriquecerPresupuesto(p, gastosPorCategoria) {
   const gastado = gastosPorCategoria[p.categoria_id] || 0
   const estadoCalculado = calcularEstadoPresupuesto({
@@ -43,13 +53,14 @@ export async function getPresupuestos(userId, mes, anio) {
   if (pError) throw pError
   if (!presupuestos || presupuestos.length === 0) return []
 
+  const { inicio, fin } = rangoMesLocal(anio, mes)
   const { data: gastos, error: gError } = await supabase
     .from('transacciones')
     .select('categoria_id, monto')
     .eq('user_id', userId)
     .eq('tipo', 'gasto')
-    .gte('fecha', `${anio}-${String(mes).padStart(2, '0')}-01`)
-    .lte('fecha', new Date(anio, mes, 0).toISOString().split('T')[0])
+    .gte('fecha', inicio)
+    .lte('fecha', fin)
 
   if (gError) throw gError
 
@@ -84,14 +95,15 @@ export async function updatePresupuesto(id, userId, data, mes, anio) {
   if (error) throw error
 
   // Recalcular el gasto real de esta categoría en el mes/año
+  const { inicio, fin } = rangoMesLocal(anio, mes)
   const { data: gastos } = await supabase
     .from('transacciones')
     .select('categoria_id, monto')
     .eq('user_id', userId)
     .eq('tipo', 'gasto')
     .eq('categoria_id', result.categoria_id)
-    .gte('fecha', `${anio}-${String(mes).padStart(2, '0')}-01`)
-    .lte('fecha', new Date(anio, mes, 0).toISOString().split('T')[0])
+    .gte('fecha', inicio)
+    .lte('fecha', fin)
 
   const gastosPorCategoria = {
     [result.categoria_id]: (gastos || []).reduce((acc, g) => acc + Number(g.monto), 0),

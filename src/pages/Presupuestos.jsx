@@ -23,7 +23,6 @@ import { DEFAULT_UMBRAL_ALERTA_PCT } from '../utils/presupuestoStatus'
 import { validatePresupuestoUmbralForm, hasErrors } from '../utils/validationHelpers'
 import MetaAhorroCard from '../components/ui/MetaAhorroCard'
 
-const HOY = new Date()
 const INITIAL_FORM = { categoria_id: '', monto_limite: '', umbral_alerta_pct: String(DEFAULT_UMBRAL_ALERTA_PCT) }
 
 const cx = (...classes) => classes.filter(Boolean).join(' ')
@@ -201,8 +200,10 @@ function UiModal({ open, onClose, title, children, footer, size = 'md' }) {
 }
 
 export default function Presupuestos() {
-  const [mes, setMes] = useState(HOY.getMonth() + 1)
-  const [anio, setAnio] = useState(HOY.getFullYear())
+  // Initializer perezoso: se evalúa solo al primer render, evitando que
+  // un `new Date()` a nivel módulo se quede congelado entre sesiones largas.
+  const [mes, setMes] = useState(() => new Date().getMonth() + 1)
+  const [anio, setAnio] = useState(() => new Date().getFullYear())
 
   const { presupuestos, loading, resumen, crear, actualizar, eliminar } = usePresupuestos(mes, anio)
   const { categorias } = useCategorias()
