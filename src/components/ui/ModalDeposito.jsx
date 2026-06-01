@@ -39,7 +39,7 @@ export default function ModalDeposito({ abierto, onCerrar }) {
   )
 
   // ── Validación ─────────────────────────────────────────────────────────────
-  function validar() {
+  const validar = useCallback(() => {
     const nuevosErrores = {}
 
     const montoNum = Number(String(form.monto).replace(/\./g, '').replace(',', '.'))
@@ -57,7 +57,7 @@ export default function ModalDeposito({ abierto, onCerrar }) {
 
     setErrores(nuevosErrores)
     return Object.keys(nuevosErrores).length === 0
-  }
+  }, [form])
 
   // ── Handlers ───────────────────────────────────────────────────────────────
   const handleChange = useCallback((e) => {
@@ -101,7 +101,7 @@ export default function ModalDeposito({ abierto, onCerrar }) {
     } finally {
       setCargando(false)
     }
-  }, [form, crearTransaccion, onCerrar])
+  }, [form, crearTransaccion, onCerrar, validar])
 
   const handleCerrar = useCallback(() => {
     if (cargando) return

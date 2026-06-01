@@ -67,28 +67,38 @@ export function validateTransaccionForm({ tipo, monto, categoria_id, fecha, desc
 }
 
 /**
- * Valida si hay fondos suficientes para crear/actualizar una transaccion.
- * - transacciones: lista actual de transacciones (ingresos/gastos)
- * - params: { tipo, monto, editando } donde editando es la transaccion previa (opcional)
- * Devuelve null si hay fondos, o string con mensaje de error si no.
+ * Valida si hay fondos suficientes para registrar un GASTO en la fecha indicada.
+ *
+ * Calcula el balance acumulado al cierre de `fecha` (todas las transacciones
+ * con fecha ≤ `fecha`, excluyendo el registro que se está editando), y
+ * comprueba que aún queden fondos tras descontar el nuevo monto.
+ *
+ * Los ingresos siempre se permiten (no requieren fondos previos).
+ *
+ * @param {Array} transacciones Lista actual de transacciones del usuario.
+ * @param {Object} params
+ * @param {'ingreso'|'gasto'} params.tipo
+ * @param {number|string} params.monto Monto del nuevo registro.
+ * @param {string} [params.fecha] Fecha del nuevo registro en formato YYYY-MM-DD.
+ *   Si se omite se asume hoy.
+ * @param {Object|null} [params.editando] Transacción previa (al editar).
+ * @returns {string|null} Mensaje de error o null si todo bien.
  */
-export function validateFondosSuficientes(transacciones, { tipo, monto, editando = null }) {
-  const numMonto = Number(monto || 0)
+export function validateFondosSuficientes(transacciones, { tipo, monto, fecha, editando = null }) {
+  if (tipo !== 'gasto') return null
 
-  // calcular balance actual (ingresos - gastos)
-  const balanceActual = transacciones.reduce((acc, t) => {
+  const numMonto = Number(monto || 0)
+  const fechaGasto = fecha || new Date().toISOString().split('T')[0]
+
+  const balanceEnFecha = transacciones.reduce((acc, t) => {
+    if (editando && t.id === editando.id) return acc
+    if (!t.fecha || t.fecha > fechaGasto) return acc
     return acc + (t.tipo === 'ingreso' ? Number(t.monto || 0) : -Number(t.monto || 0))
   }, 0)
 
-  const efectoPrev = editando
-    ? (editando.tipo === 'ingreso' ? Number(editando.monto || 0) : -Number(editando.monto || 0))
-    : 0
-
-  const efectoNuevo = tipo === 'ingreso' ? numMonto : -numMonto
-
-  const balanceDespues = balanceActual - efectoPrev + efectoNuevo
-
-  if (balanceDespues < 0 && tipo === 'gasto') return 'Fondos insuficientes'
+  if (balanceEnFecha - numMonto < 0) {
+    return 'Fondos insuficientes a la fecha del gasto'
+  }
   return null
 }
 

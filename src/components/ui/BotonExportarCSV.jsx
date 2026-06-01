@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import toast from 'react-hot-toast'
 import { Download, ChevronDown, FileSpreadsheet, FileText } from 'lucide-react'
 import { exportarExcel } from '../../utils/exportarExcel'
 import { exportarCSV } from '../../utils/exportarCSV'
@@ -31,13 +32,17 @@ export default function BotonExportarCSV({
     return `transacciones-${sufijo}${scope === 'pagina' ? '-pag' : ''}`
   }
 
-  const handleExportar = (formato, scope) => {
+  const handleExportar = async (formato, scope) => {
     const datos = scope === 'pagina' ? transaccionesPaginadas : transaccionesFiltradas
     if (datos.length === 0) return
     const nombre = generarNombre(scope)
-    if (formato === 'xlsx') exportarExcel(datos, categorias, nombre)
-    else exportarCSV(datos, categorias, nombre)
     setAbierto(false)
+    try {
+      if (formato === 'xlsx') await exportarExcel(datos, categorias, nombre)
+      else exportarCSV(datos, categorias, nombre)
+    } catch (err) {
+      toast.error(err?.message || 'No se pudo generar el archivo. Intenta nuevamente.')
+    }
   }
 
   const disabled = transaccionesFiltradas.length === 0

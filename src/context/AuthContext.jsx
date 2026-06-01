@@ -13,16 +13,53 @@ import {
 const AuthContext = createContext(null)
 
 /**
- * Clave utilizada en localStorage / sessionStorage para determinar
- * si la sesion debe persistir al cerrar el navegador ("Recordarme").
+ * Persistencia de sesión "Recordarme".
  *
- * - localStorage  → sesion persistente (sobrevive cierre de navegador)
- * - sessionStorage → sesion temporal  (se pierde al cerrar pestana)
+ * Modelo:
+ * - PERSIST_KEY:   localStorage. 'true'  → usuario marcó "Recordarme" → sesión persistente.
+ *                                 'false' → sesión solo durante el "browser session" actual.
+ * - HEARTBEAT_KEY: localStorage. timestamp (ms) que cada pestaña activa refresca cada
+ *                   HEARTBEAT_INTERVAL_MS. Permite distinguir "el navegador sigue abierto"
+ *                   (alguna pestaña vivía y refrescaba el heartbeat) de "el navegador se cerró
+ *                   y volvió a abrir" (heartbeat queda stale).
  *
- * Si no existe en ninguno de los dos storages al cargar la app,
- * se cierra la sesion automaticamente para forzar re-autenticacion.
+ * Por qué localStorage (y no sessionStorage):
+ * - sessionStorage es PER-PESTAÑA. Si el usuario abre la app en una pestaña nueva
+ *   (ctrl+click, target="_blank", etc.), sessionStorage está vacío aunque el navegador
+ *   siga abierto. El esquema previo expulsaba al usuario en ese caso.
+ * - localStorage es compartido entre pestañas del mismo origen, así que el heartbeat
+ *   de cualquier pestaña activa mantiene viva la sesión temporal para las demás.
  */
-const SESSION_KEY = 'finanzasu_session'
+const PERSIST_KEY = 'finanzasu_persist'
+const HEARTBEAT_KEY = 'finanzasu_heartbeat'
+const HEARTBEAT_INTERVAL_MS = 30_000
+const HEARTBEAT_STALE_MS = 90_000
+
+function escribirHeartbeat() {
+  try {
+    localStorage.setItem(HEARTBEAT_KEY, String(Date.now()))
+  } catch {
+    // localStorage puede fallar en modo privado en algunos navegadores: ignoramos.
+  }
+}
+
+function heartbeatReciente() {
+  const ts = Number(localStorage.getItem(HEARTBEAT_KEY) || 0)
+  return Number.isFinite(ts) && Date.now() - ts < HEARTBEAT_STALE_MS
+}
+
+function debeMantenerSesion() {
+  return localStorage.getItem(PERSIST_KEY) === 'true' || heartbeatReciente()
+}
+
+function limpiarPersistencia() {
+  try {
+    localStorage.removeItem(PERSIST_KEY)
+    localStorage.removeItem(HEARTBEAT_KEY)
+  } catch {
+    // Ver comentario en escribirHeartbeat.
+  }
+}
 
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null)
@@ -46,25 +83,31 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     let mounted = true
+    let heartbeatInterval = null
+
+    const iniciarHeartbeat = () => {
+      escribirHeartbeat()
+      if (!heartbeatInterval) {
+        heartbeatInterval = setInterval(escribirHeartbeat, HEARTBEAT_INTERVAL_MS)
+      }
+    }
+
+    const detenerHeartbeat = () => {
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval)
+        heartbeatInterval = null
+      }
+    }
 
     obtenerSesionActual().then(({ data: { session } }) => {
       if (!mounted) return
 
-      // --- Logica "Recordarme" ---
-      // Si Supabase tiene una sesion activa pero NO existe el flag
-      // en localStorage ni sessionStorage, significa que el usuario
-      // NO marco "Recordarme" y ya cerro el navegador previamente.
-      // En ese caso cerramos sesion para no mantener acceso no deseado.
-      //
-      // EXCEPCION: si estamos en el flujo de recuperacion de contrasena,
-      // NO cerramos la sesion porque Supabase la acaba de crear
-      // a partir del enlace de recovery y la necesitamos para
-      // poder llamar a updateUser({ password }).
       if (session?.user) {
-        const enLocal = localStorage.getItem(SESSION_KEY)
-        const enSession = sessionStorage.getItem(SESSION_KEY)
-
-        if (!enLocal && !enSession && !esFlujodeRecuperacion()) {
+        // Si NO hay marca persistente, NI hay heartbeat reciente (= alguna pestaña
+        // de este navegador estuvo viva en los últimos HEARTBEAT_STALE_MS), y NO
+        // estamos en el flujo de recovery, asumimos navegador cerrado y reabierto:
+        // cerrar sesión.
+        if (!debeMantenerSesion() && !esFlujodeRecuperacion()) {
           cerrarSesionUsuario().then(() => {
             if (mounted) {
               setUsuario(null)
@@ -73,6 +116,8 @@ export function AuthProvider({ children }) {
           })
           return
         }
+
+        iniciarHeartbeat()
       }
 
       setUsuario(session?.user ?? null)
@@ -81,13 +126,20 @@ export function AuthProvider({ children }) {
 
     const { data: { subscription } } = escucharCambiosAuth(
       (evento, session) => {
-        // Cuando Supabase procesa un enlace de recuperacion, emite
-        // el evento PASSWORD_RECOVERY. Guardamos un flag temporal
-        // en sessionStorage para que la logica de "Recordarme"
-        // no destruya esta sesion antes de que el usuario pueda
-        // cambiar su contrasena.
         if (evento === 'PASSWORD_RECOVERY' && session?.user) {
-          sessionStorage.setItem(SESSION_KEY, 'recovery')
+          // La sesión de recovery es por definición temporal. Asegurar el flag
+          // para que al terminar el flujo no quede persistente sin querer.
+          try {
+            localStorage.setItem(PERSIST_KEY, 'false')
+          } catch { /* ver escribirHeartbeat */ }
+          iniciarHeartbeat()
+        }
+
+        if (session?.user) {
+          iniciarHeartbeat()
+        } else {
+          detenerHeartbeat()
+          limpiarPersistencia()
         }
 
         setUsuario(session?.user ?? null)
@@ -97,6 +149,7 @@ export function AuthProvider({ children }) {
 
     return () => {
       mounted = false
+      detenerHeartbeat()
       subscription.unsubscribe()
     }
   }, [])
@@ -111,31 +164,26 @@ export function AuthProvider({ children }) {
    * @param {Object} params
    * @param {string} params.email
    * @param {string} params.password
-   * @param {boolean} [params.recordar=false] - Si true, la sesion
-   *   persiste en localStorage; si false, solo en sessionStorage
-   *   (se pierde al cerrar el navegador).
+   * @param {boolean} [params.recordar=false] - Si true, la sesión persiste
+   *   incluso después de cerrar el navegador. Si false, la sesión vive solo
+   *   mientras alguna pestaña refresque el heartbeat (≤ HEARTBEAT_STALE_MS).
    */
   const iniciarSesion = async ({ email, password, recordar = false }) => {
     const data = await iniciarSesionUsuario({ email, password })
 
-    if (recordar) {
-      localStorage.setItem(SESSION_KEY, 'persistent')
-      sessionStorage.removeItem(SESSION_KEY)
-    } else {
-      sessionStorage.setItem(SESSION_KEY, 'temporary')
-      localStorage.removeItem(SESSION_KEY)
-    }
+    try {
+      localStorage.setItem(PERSIST_KEY, recordar ? 'true' : 'false')
+    } catch { /* ver escribirHeartbeat */ }
+    escribirHeartbeat()
 
     return data
   }
 
   /**
-   * Cierra sesion y limpia ambos storages para que no quede
-   * ningun rastro del flag de "Recordarme".
+   * Cierra sesión y limpia ambos flags de persistencia.
    */
   const cerrarSesion = async () => {
-    localStorage.removeItem(SESSION_KEY)
-    sessionStorage.removeItem(SESSION_KEY)
+    limpiarPersistencia()
     await cerrarSesionUsuario()
   }
 

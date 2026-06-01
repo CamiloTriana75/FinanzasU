@@ -145,8 +145,8 @@ export function AppDataProvider({ children }) {
 
     setErrorGlobal('')
 
-    // Validar fondos disponibles antes de crear (HU-23)
-    const posibleError = validateFondosSuficientes(transacciones, { tipo, monto, editando: null })
+    // Validar fondos disponibles a la fecha del gasto (HU-23)
+    const posibleError = validateFondosSuficientes(transacciones, { tipo, monto, fecha, editando: null })
     if (posibleError) {
       throw new Error(posibleError)
     }
@@ -160,8 +160,14 @@ export function AppDataProvider({ children }) {
       fecha
     })
 
+    // setState funcional para resistir doble-click: cada llamada lee el estado
+    // más reciente y prepende, sin pisarse entre invocaciones concurrentes.
+    setTransacciones((prev) => (
+      prev.some((t) => t.id === nuevaTransaccion.id) ? prev : [nuevaTransaccion, ...prev]
+    ))
+    // Best-effort para notificaciones/logros aguas abajo (puede estar levemente
+    // desfasado en caso de doble-click, pero la persistencia ya es correcta).
     const nextTransacciones = [nuevaTransaccion, ...transacciones]
-    setTransacciones(nextTransacciones)
 
     try {
       const categoria = categorias.find((c) => Number(c.id) === Number(categoriaId))
@@ -220,15 +226,20 @@ export function AppDataProvider({ children }) {
     if (!usuario?.id) throw new Error('Sesion invalida.')
     setErrorGlobal('')
     const anterior = transacciones.find((t) => t.id === id)
-    // Validar fondos disponibles antes de actualizar (HU-23)
-    const posibleError = validateFondosSuficientes(transacciones, { tipo: data.tipo ?? anterior.tipo, monto: data.monto ?? anterior.monto, editando: anterior })
+    // Validar fondos disponibles a la fecha del gasto (HU-23)
+    const posibleError = validateFondosSuficientes(transacciones, {
+      tipo: data.tipo ?? anterior.tipo,
+      monto: data.monto ?? anterior.monto,
+      fecha: data.fecha ?? anterior.fecha,
+      editando: anterior
+    })
     if (posibleError) {
       throw new Error(posibleError)
     }
     const actualizada = await actualizarTransaccionService(id, usuario.id, data)
 
+    setTransacciones((prev) => prev.map((t) => (t.id === id ? actualizada : t)))
     const nextTransacciones = transacciones.map((t) => (t.id === id ? actualizada : t))
-    setTransacciones(nextTransacciones)
 
     try {
       const categoria = categorias.find((c) => Number(c.id) === Number(actualizada.categoria_id))
@@ -289,8 +300,8 @@ export function AppDataProvider({ children }) {
     if (!usuario?.id) throw new Error('Sesion invalida.')
     setErrorGlobal('')
     await eliminarTransaccionService(id, usuario.id)
+    setTransacciones((prev) => prev.filter((t) => t.id !== id))
     const nextTransacciones = transacciones.filter((t) => t.id !== id)
-    setTransacciones(nextTransacciones)
 
     // Evaluar logros después de eliminar transacción
     try {
@@ -304,8 +315,10 @@ export function AppDataProvider({ children }) {
     if (!usuario?.id) throw new Error('Sesion invalida.')
     setErrorGlobal('')
     const nueva = await crearCategoriaService({ ...data, user_id: usuario.id, es_predeterminada: false })
+    setCategorias((prev) => (
+      prev.some((c) => c.id === nueva.id) ? prev : [...prev, nueva]
+    ))
     const nextCategorias = [...categorias, nueva]
-    setCategorias(nextCategorias)
 
     // Evaluar logros después de crear categoría (para master-categorias)
     try {
@@ -321,8 +334,8 @@ export function AppDataProvider({ children }) {
     if (!usuario?.id) throw new Error('Sesion invalida.')
     setErrorGlobal('')
     const actualizada = await actualizarCategoriaService(id, usuario.id, data)
+    setCategorias((prev) => prev.map((c) => (c.id === id ? actualizada : c)))
     const nextCategorias = categorias.map((c) => (c.id === id ? actualizada : c))
-    setCategorias(nextCategorias)
 
     try {
       await evaluarYActualizarLogros({ transacciones, presupuestos, categorias: nextCategorias })
@@ -337,8 +350,8 @@ export function AppDataProvider({ children }) {
     if (!usuario?.id) throw new Error('Sesion invalida.')
     setErrorGlobal('')
     await eliminarCategoriaService(id, usuario.id)
+    setCategorias((prev) => prev.filter((c) => c.id !== id))
     const nextCategorias = categorias.filter((c) => c.id !== id)
-    setCategorias(nextCategorias)
 
     try {
       await evaluarYActualizarLogros({ transacciones, presupuestos, categorias: nextCategorias })
@@ -359,8 +372,10 @@ export function AppDataProvider({ children }) {
       anio
     })
 
+    setPresupuestos((prev) => (
+      prev.some((p) => p.id === nuevoPresupuesto.id) ? prev : [nuevoPresupuesto, ...prev]
+    ))
     const nextPresupuestos = [nuevoPresupuesto, ...presupuestos]
-    setPresupuestos(nextPresupuestos)
 
     try {
       await evaluarYActualizarLogros({ transacciones, presupuestos: nextPresupuestos, categorias })
@@ -391,10 +406,12 @@ export function AppDataProvider({ children }) {
       anioObjetivo
     )
 
+    setPresupuestos((prev) => prev.map((p) => (
+      p.id === id ? { ...p, ...presupuestoActualizado } : p
+    )))
     const nextPresupuestos = presupuestos.map((p) => (
       p.id === id ? { ...p, ...presupuestoActualizado } : p
     ))
-    setPresupuestos(nextPresupuestos)
 
     try {
       await evaluarYActualizarLogros({ transacciones, presupuestos: nextPresupuestos, categorias })
@@ -410,8 +427,8 @@ export function AppDataProvider({ children }) {
     setErrorGlobal('')
 
     await eliminarPresupuestoService(id, usuario.id)
+    setPresupuestos((prev) => prev.filter((p) => p.id !== id))
     const nextPresupuestos = presupuestos.filter((p) => p.id !== id)
-    setPresupuestos(nextPresupuestos)
 
     try {
       await evaluarYActualizarLogros({ transacciones, presupuestos: nextPresupuestos, categorias })

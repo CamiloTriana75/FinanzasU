@@ -82,18 +82,18 @@ export default function Dashboard() {
   // ── HU-19: estado del modal de depósito ──────────────────────────
   const [modalDepositoAbierto, setModalDepositoAbierto] = useState(false)
 
-  // Current month transactions
-  const mesActual = useMemo(() => {
-    const now = new Date()
-    return { mes: now.getMonth() + 1, anio: now.getFullYear() }
-  }, [])
+  // Calcular el mes actual en cada render. Es barato y evita que se quede
+  // "congelado" cuando la app se deja abierta cruzando el cambio de mes.
+  const now = new Date()
+  const mesActualMes = now.getMonth() + 1
+  const mesActualAnio = now.getFullYear()
 
   const transaccionesMes = useMemo(() => {
     return transacciones.filter((t) => {
       const [anioTxt, mesTxt] = String(t.fecha || '').split('-')
-      return Number(mesTxt) === mesActual.mes && Number(anioTxt) === mesActual.anio
+      return Number(mesTxt) === mesActualMes && Number(anioTxt) === mesActualAnio
     })
-  }, [transacciones, mesActual])
+  }, [transacciones, mesActualMes, mesActualAnio])
 
   const flujoMensual = useMemo(() => {
     const ingresos = transaccionesMes
@@ -105,12 +105,13 @@ export default function Dashboard() {
     return { ingresos, gastos }
   }, [transaccionesMes])
 
-  // Mini bars: last 5 months breakdown
+  // Mini bars: last 5 months breakdown.
+  // Depende de mesActualMes/Anio (que se recalculan en cada render) para que
+  // las barras avancen cuando la app cruce un cambio de mes sin recargar.
   const miniBarras = useMemo(() => {
     const meses = []
-    const now = new Date()
     for (let i = 4; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const d = new Date(mesActualAnio, mesActualMes - 1 - i, 1)
       meses.push({ mes: d.getMonth() + 1, anio: d.getFullYear() })
     }
 
@@ -141,7 +142,7 @@ export default function Dashboard() {
       ingresos: ingresoPorMes.map((v) => Math.round((v / maxIngreso) * 100)),
       gastos: gastoPorMes.map((v) => Math.round((v / maxGasto) * 100))
     }
-  }, [transacciones])
+  }, [transacciones, mesActualMes, mesActualAnio])
 
   // Category breakdown for expenses
   const gastosPorCategoria = useMemo(() => {
@@ -180,15 +181,16 @@ export default function Dashboard() {
       })
   }, [transacciones, categorias])
 
-  // General budget summary (all budgets for current month)
+  // General budget summary (only budgets for current month — mezclar periodos
+  // confunde el "uso global" mostrando datos antiguos como si fueran de hoy).
   const resumenPresupuestos = useMemo(() => {
     if (!presupuestos.length) return null
 
-    const presupuestosMes = presupuestos.filter(
-      (p) => Number(p.mes) === mesActual.mes && Number(p.anio) === mesActual.anio
+    const lista = presupuestos.filter(
+      (p) => Number(p.mes) === mesActualMes && Number(p.anio) === mesActualAnio
     )
-    // If no budgets for current month, use all budgets
-    const lista = presupuestosMes.length > 0 ? presupuestosMes : presupuestos
+
+    if (lista.length === 0) return null
 
     let totalLimite = 0
     let totalGastado = 0
@@ -225,7 +227,7 @@ export default function Dashboard() {
       cantidad: lista.length,
       detalle
     }
-  }, [presupuestos, categorias, transacciones, mesActual])
+  }, [presupuestos, categorias, transacciones, mesActualMes, mesActualAnio])
 
   // SVG pie chart data
   const pieData = useMemo(() => {
