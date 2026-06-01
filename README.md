@@ -8,7 +8,7 @@
 ![Status](https://img.shields.io/badge/status-Release%20Candidate-success?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 ![Build](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
-![Tests](https://img.shields.io/badge/tests-16%2F16-brightgreen?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-18%2F18-brightgreen?style=flat-square)
 
 **Una plataforma integral para que estudiantes universitarios gestionen sus finanzas personales de forma inteligente y controlada.**
 
@@ -114,18 +114,18 @@ En el contexto académico, muchos estudiantes carecen de herramientas especializ
 
 ## 📊 Estadísticas
 
-### Métricas del Proyecto (corte 2026-05-31)
+### Métricas del Proyecto (corte 2026-06-01)
 
 ```
-📅 Período de Desarrollo:    Marzo 2026 - Mayo 2026
-💾 Commits Totales:          145
+📅 Período de Desarrollo:    Marzo 2026 - Junio 2026
+💾 Commits Totales:          157
 👥 Contribuidores Activos:   7
 📝 Historias de Usuario:     28 (HU-01 a HU-28)
 ✅ HUs Completadas:          26/28 (92.8%)
 📋 Criterios de Aceptación:  141/150 (94.0%)
-🧪 Tests Automatizados:      16/16 (100% pass) en 8 suites
-🛠️ Build de producción:      OK (vite build sin errores)
-🔍 Lint:                     0 errores ESLint
+🧪 Tests Automatizados:      18/18 (100% pass) en 8 suites
+🛠️ Build de producción:      OK (977 KB inicial · chunk xlsx lazy 424 KB)
+🔍 Lint:                     0 errores, 0 warnings ESLint
 ```
 
 > Las únicas HUs pendientes son **HU-27 (Despliegue en Producción)** y **HU-28 (Pruebas de QA Integral)**, ambas dependientes de la salida a producción.
@@ -143,7 +143,7 @@ Características Core       █████████████████�
 Sistema de Notificaciones  ████████████████████ 100% (3/3)
 Reportes & Exportación     ████████████████████ 100% (2/2)
 Documentación              ████████████████████ 100% (8/8)
-Testing & QA               ████████████████░░░░  80% (16 tests / 8 suites)
+Testing & QA               █████████████████░░░  90% (18 tests / 8 suites)
 ```
 
 #### Estado por Componente
@@ -168,7 +168,7 @@ Testing & QA               ████████████████░�
 🎯 Gamificación            ████████████████████ 100%
 🔔 Notificaciones          ████████████████████ 100%
 📱 Responsividad UI        ███████████████░░░░░  75%
-🧪 Cobertura de Tests      ████████████████░░░░  80%
+🧪 Cobertura de Tests      █████████████████░░░  90%
 📚 Documentación           ████████████████████ 100%
 ```
 
@@ -180,23 +180,24 @@ Testing & QA               ████████████████░�
 
 ```
 Marzo 2026:  ███░░░░░░░░░░░░░░░░░  ~12 commits  ( 8%)
-Abril 2026:  ██████████████░░░░░░  ~92 commits  (63%)
-Mayo 2026:   ██████░░░░░░░░░░░░░░  ~41 commits  (28%)
+Abril 2026:  █████████████░░░░░░░  ~92 commits  (59%)
+Mayo 2026:   ██████░░░░░░░░░░░░░░  ~41 commits  (26%)
+Junio 2026:  ██░░░░░░░░░░░░░░░░░░  ~12 commits  ( 7%)
 ```
 
 ### Histórico de Commits (Descendente) — `git shortlog -sn`
 
-| Autor                           | Commits | Período  | Contribución                       |
-| ------------------------------- | ------- | -------- | ----------------------------------- |
-| 🟢 **Luis Carlos Pedraza**      | 49      | Mar-May  | Docs, HU-13, Validaciones, RLS      |
-| 🔵 **Deibyd Castillo**          | 36      | Abr-May  | UI/Design, Logros, Dashboard, Metas |
-| 🟡 **Nicolás García**          | 16      | Abr-May  | HU-11/12, Reportes, Filtros         |
-| 🟣 **Yerlin Álvarez**          | 12      | Abr-May  | HU-14/15, Contexto Académico       |
-| 🟠 **Johan Beltrán**           | 10      | Abr-May  | HU-05/06, Layout, Accesibilidad     |
-| ⚫ **Kevin García**            |  9      | Mar-Abr  | Setup, Documentación               |
-| 🔴 **Juan Camilo Triana**       |  8      | Mar-Abr  | Setup inicial, Auth                 |
+| Autor                           | Commits | Período  | Contribución                                   |
+| ------------------------------- | ------- | -------- | ----------------------------------------------- |
+| 🟢 **Luis Carlos Pedraza**      | 49      | Mar-May  | Docs, HU-13, Validaciones, RLS                  |
+| 🔵 **Deibyd Castillo**          | 48      | Abr-Jun  | UI/Design, Logros, Dashboard, Metas, Code Review|
+| 🟡 **Nicolás García**          | 16      | Abr-May  | HU-11/12, Reportes, Filtros                     |
+| 🟣 **Yerlin Álvarez**          | 12      | Abr-May  | HU-14/15, Contexto Académico                   |
+| 🟠 **Johan Beltrán**           | 10      | Abr-May  | HU-05/06, Layout, Accesibilidad                 |
+| ⚫ **Kevin García**            |  9      | Mar-Abr  | Setup, Documentación                           |
+| 🔴 **Juan Camilo Triana**       |  8      | Mar-Abr  | Setup inicial, Auth                             |
 
-> Total: **145 commits** sobre `main` + `develop` al 31/05/2026.
+> Total: **157 commits** sobre `main` + `develop` + `fix/code-review-bugs` al 01/06/2026.
 
 ---
 
@@ -529,6 +530,35 @@ FinanzasU está preparado para desplegarse como una **SPA estática** servida po
 - `main` - Versión estable en producción
 - `develop` - Rama de integración (más actualizada)
 - `feature/*` - Ramas de características
+
+---
+
+## 🔧 Ronda de Code Review (junio 2026)
+
+Auditoría completa del código y aplicación de **12 fixes encadenados** sobre la rama `fix/code-review-bugs` (a partir de `release/HU-27-deploy-main`). Lint y tests siguen verdes; el bundle inicial bajó de **1.26 MB → 977 KB** (gzip 372 KB → 277 KB) gracias al code-splitting de `xlsx`, que ahora vive en un chunk separado cargado bajo demanda.
+
+| Commit    | Categoría             | Descripción                                                                                                                  |
+| --------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `54969d9` | `fix(auth)`           | Reemplazo del "Recordarme" basado en `sessionStorage` por `localStorage` + heartbeat. Evita expulsar la sesión al abrir pestañas nuevas. |
+| `1c0038d` | `fix(transacciones)`  | `validateFondosSuficientes` calcula el balance acumulado **al cierre de la fecha del gasto**, no el balance lifetime.        |
+| `3030c45` | `fix(transacciones)`  | `setState` funcional en las 9 mutaciones (transacciones, categorías, presupuestos) para evitar pisado por doble-click.       |
+| `b95cb1a` | `fix(fechas)`         | Dashboard y Presupuestos recalculan mes/año actual en cada render en lugar de congelarlo al montar.                          |
+| `5488084` | `fix(dashboard)`      | El resumen de presupuestos ya no mezcla periodos cuando el mes actual no tiene presupuestos definidos.                       |
+| `9dd73d8` | `perf(exports)`       | `xlsx` se carga bajo demanda (~300 KB fuera del bundle inicial).                                                             |
+| `319abae` | `fix(hooks)`          | Resolución de warnings `react-hooks/exhaustive-deps` en `ModalDeposito` y `NotificationsContext`.                            |
+| `4086ecd` | `fix(routing)`        | Catch-all (`*`) redirige según estado de auth en vez de siempre a `/login`.                                                  |
+| `84fb1b2` | `fix(categorias)`     | `listarCategorias` reemplaza `.or` con string interpolado por dos queries paralelas.                                         |
+| `4cd92a8` | `fix(presupuestos)`   | Cálculo del fin de mes en local para evitar corrimiento UTC en husos positivos.                                              |
+| `ada6e70` | `fix(reset-password)` | Timeout de verificación del enlace de recovery 5 s → 15 s.                                                                   |
+| `11c1a32` | `chore(env)`          | Placeholders en `.env.example` (URL y anon key reales removidas).                                                            |
+
+### Verificación
+
+```bash
+npm run lint   # 0 errores, 0 warnings
+npm test       # 18/18 ✓ (16 previos + 2 nuevos cubriendo el balance al momento)
+npm run build  # OK · 977 KB inicial · xlsx chunk 424 KB
+```
 
 ---
 
