@@ -145,8 +145,8 @@ export function AppDataProvider({ children }) {
 
     setErrorGlobal('')
 
-    // Validar fondos disponibles antes de crear (HU-23)
-    const posibleError = validateFondosSuficientes(transacciones, { tipo, monto, editando: null })
+    // Validar fondos disponibles a la fecha del gasto (HU-23)
+    const posibleError = validateFondosSuficientes(transacciones, { tipo, monto, fecha, editando: null })
     if (posibleError) {
       throw new Error(posibleError)
     }
@@ -226,8 +226,13 @@ export function AppDataProvider({ children }) {
     if (!usuario?.id) throw new Error('Sesion invalida.')
     setErrorGlobal('')
     const anterior = transacciones.find((t) => t.id === id)
-    // Validar fondos disponibles antes de actualizar (HU-23)
-    const posibleError = validateFondosSuficientes(transacciones, { tipo: data.tipo ?? anterior.tipo, monto: data.monto ?? anterior.monto, editando: anterior })
+    // Validar fondos disponibles a la fecha del gasto (HU-23)
+    const posibleError = validateFondosSuficientes(transacciones, {
+      tipo: data.tipo ?? anterior.tipo,
+      monto: data.monto ?? anterior.monto,
+      fecha: data.fecha ?? anterior.fecha,
+      editando: anterior
+    })
     if (posibleError) {
       throw new Error(posibleError)
     }
